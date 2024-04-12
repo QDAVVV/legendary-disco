@@ -91,6 +91,9 @@ for block in blocks:
     code += block.to_python_code()
 
 # Exécutez le code
-
+try:
+    exec(code)
+except Exception as e:
+    print(f"Error: {e}")
 
 print(code)

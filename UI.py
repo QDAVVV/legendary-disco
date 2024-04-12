@@ -1,7 +1,44 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem
 from PyQt6.QtCore import Qt, QMimeData
 from PyQt6.QtGui import QDrag, QCursor, QIcon
+from PyQt6.QtWidgets import QGraphicsRectItem
+from PyQt6.QtWidgets import QGraphicsLineItem
 
+from design import BlockBase
+from PyQt6.QtWidgets import QGraphicsWidget
+
+class Block(QGraphicsWidget, BlockBase):
+    def __init__(self, x, y, width, height, work_area):
+        QGraphicsWidget.__init__(self)
+        BlockBase.__init__(self)
+        self.setGeometry(x, y, width, height)
+        self.work_area = work_area
+
+from PyQt6.QtWidgets import QGraphicsWidget, QGraphicsProxyWidget
+from PyQt6.QtCore import QRectF
+from design import ForBlockWidget
+
+from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView
+
+
+
+class ForBlockItem(QGraphicsProxyWidget):
+    def __init__(self, x, y, width, height, work_area):
+        super().__init__()
+        self.setGeometry(QRectF(x, y, width, height))
+        self.work_area = work_area
+        self.for_block = ForBlockWidget()
+        
+         # Create a QGraphicsView
+        view = QGraphicsView()
+
+        # Set the scene of the QGraphicsView to the scene
+        scene = QGraphicsScene()
+        scene.addItem(self.for_block)
+        view.setScene(scene)
+
+        # Now you can add the QGraphicsView to your main widget
+        self.setWidget(view)
 
 class BlockList(QListWidget):
     """
@@ -29,11 +66,21 @@ class BlockList(QListWidget):
         Returns:
             None
         """
+        block_type = self.currentItem().text()
+
+        if block_type == "For":
+            x, y, width, height = 0, 0, 100, 100  # Replace with actual values
+            work_area = None  # Replace with actual work area
+            block = ForBlockItem(x, y, width, height, work_area)
+
         drag = QDrag(self)
         mime_data = QMimeData()
-        mime_data.setText(self.currentItem().text())
+        mime_data.setText(block_type)
         drag.setMimeData(mime_data)
         drag.exec()
+
+
+    
 
 class WorkArea(QGraphicsView):
     """
@@ -76,21 +123,26 @@ class WorkArea(QGraphicsView):
         """
         Event handler for drop event.
 
-        Adds a new text item to the scene at the drop position.
-
         Args:
             event: The drop event.
         """
-        
+        block_type = event.mimeData().text()
 
-        text = event.mimeData().text()
-        text_item = QGraphicsTextItem(text)
-        text_item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)  # Make the item movable
-        cursor_pos = QCursor.pos()  # Get the current cursor position
-        scene_pos = self.mapToScene(self.mapFromGlobal(cursor_pos))  # Map the cursor position to the scene
-        text_item.setPos(scene_pos) 
-        self.scene.addItem(text_item)
+        # Get the position of the drop event relative to the view
+        pos = self.mapToScene(self.viewport().mapFromGlobal(QCursor.pos()))
+
+        x, y, width, height = pos.x(), pos.y(), 100, 100  # Define position and size
+
+        work_area = self  # Pass a reference to the work area
+
+        if block_type == "For":
+            block = ForBlockItem(x, y, width, height, work_area)
+            self.scene.addItem(block)  # Add the block to the scene
+
+        # Add conditions for other block types here
+
         event.acceptProposedAction()
+
 
     def mouseDoubleClickEvent(self, event):
         """
@@ -145,6 +197,8 @@ class WorkArea(QGraphicsView):
         if event.button() == Qt.MouseButton.RightButton:
             self.setDragMode(QGraphicsView.DragMode.NoDrag)
         super().mouseReleaseEvent(event)
+
+
 
 class MainWindow(QMainWindow):
     """
@@ -215,22 +269,7 @@ class MainWindow(QMainWindow):
             elif button_names[i] == "Turn Right":
                 button.clicked.connect(self.turn_right_clicked)
             
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #2b2b2b;
-                color: #ffffff;
-            }
-            QPushButton {
-                background-color: #353535;
-                border: 1px solid #ffffff;
-            }
-            QPushButton:hover {
-                background-color: #3d3d3d;
-            }
-            QPushButton:pressed {
-                background-color: #313131;
-            }
-        """)
+        
 
         main_layout = QGridLayout()  # Main layout
         main_layout.addWidget(self.block_list, 0, 0)  # Add the block list to the left
