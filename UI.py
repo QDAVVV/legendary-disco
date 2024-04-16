@@ -1,26 +1,19 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem
-from PyQt6.QtCore import Qt, QMimeData
+from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem,QGraphicsRectItem,QGraphicsWidget, QGraphicsProxyWidget
+from PyQt6.QtCore import Qt, QMimeData, QRectF
 from PyQt6.QtGui import QDrag, QCursor, QIcon
-from PyQt6.QtWidgets import QGraphicsRectItem
-from PyQt6.QtWidgets import QGraphicsLineItem
 
 from design import BlockBase
-from PyQt6.QtWidgets import QGraphicsWidget
+from design import ForBlockWidget
+from design import WhileBlockWidget
+from design import WalkBlockWidget
 
+#Création class Block
 class Block(QGraphicsWidget, BlockBase):
     def __init__(self, x, y, width, height, work_area):
         QGraphicsWidget.__init__(self)
         BlockBase.__init__(self)
         self.setGeometry(x, y, width, height)
         self.work_area = work_area
-
-from PyQt6.QtWidgets import QGraphicsWidget, QGraphicsProxyWidget
-from PyQt6.QtCore import QRectF
-from design import ForBlockWidget
-
-from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView
-
-
 
 class ForBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
@@ -39,7 +32,42 @@ class ForBlockItem(QGraphicsProxyWidget):
 
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
+class WhileBlockItem(QGraphicsProxyWidget):
+    def __init__(self, x, y, width, height, work_area):
+        super().__init__()
+        self.setGeometry(QRectF(x, y, width, height))
+        self.work_area = work_area
+        self.while_block = WhileBlockWidget()
+        
+         # Create a QGraphicsView
+        view = QGraphicsView()
 
+        # Set the scene of the QGraphicsView to the scene
+        scene = QGraphicsScene()
+        scene.addItem(self.while_block)
+        view.setScene(scene)
+
+        # Now you can add the QGraphicsView to your main widget
+        self.setWidget(view)
+class WalkBlockItem(QGraphicsProxyWidget):
+    def __init__(self, x, y, width, height, work_area):
+        super().__init__()
+        self.setGeometry(QRectF(x, y, width, height))
+        self.work_area = work_area
+        self.walk_block = WalkBlockWidget()
+        
+         # Create a QGraphicsView
+        view = QGraphicsView()
+
+        # Set the scene of the QGraphicsView to the scene
+        scene = QGraphicsScene()
+        scene.addItem(self.walk_block)
+        view.setScene(scene)
+
+        # Now you can add the QGraphicsView to your main widget
+        self.setWidget(view)
+
+#Initialisation de la class BlockList
 class BlockList(QListWidget):
     """
     A custom QListWidget subclass that allows dragging items.
@@ -72,6 +100,18 @@ class BlockList(QListWidget):
             x, y, width, height = 0, 0, 100, 100  # Replace with actual values
             work_area = None  # Replace with actual work area
             block = ForBlockItem(x, y, width, height, work_area)
+        
+        elif block_type == "While":
+            x, y, width, height = 0, 0, 100, 100
+            work_area = None
+            block = WhileBlockItem(x, y, width, height, work_area)
+            print("While")
+        
+        elif block_type == "Walk":
+            x, y, width, height = 0, 0, 100, 100
+            work_area = None
+            block = WalkBlockItem(x, y, width, height, work_area)
+            print("Walk")
 
         drag = QDrag(self)
         mime_data = QMimeData()
@@ -140,6 +180,12 @@ class WorkArea(QGraphicsView):
             self.scene.addItem(block)  # Add the block to the scene
 
         # Add conditions for other block types here
+        elif block_type == "While":
+            block = WhileBlockItem(x, y, width, height, work_area)
+            self.scene.addItem(block)
+        elif block_type == "Walk":
+            block = WalkBlockItem(x, y, width, height, work_area)
+            self.scene.addItem(block)
 
         event.acceptProposedAction()
 
