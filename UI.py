@@ -19,16 +19,20 @@ class ForBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
         super().__init__()
         self.setGeometry(QRectF(x, y, width, height))
+        print(x, y, width, height)
         self.work_area = work_area
         self.for_block = ForBlockWidget()
         
          # Create a QGraphicsView
         view = QGraphicsView()
+        
+        
 
         # Set the scene of the QGraphicsView to the scene
         scene = QGraphicsScene()
         scene.addItem(self.for_block)
         view.setScene(scene)
+        
 
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
@@ -49,6 +53,7 @@ class WhileBlockItem(QGraphicsProxyWidget):
 
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
+        
 class WalkBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
         super().__init__()
@@ -83,8 +88,9 @@ class BlockList(QListWidget):
         super().__init__(parent)
         self.setDragEnabled(True)
         
+        
 
-    def startDrag(self, actions):
+    def startDrag(self, event):
         """
         Starts the drag operation.
 
@@ -95,20 +101,27 @@ class BlockList(QListWidget):
             None
         """
         block_type = self.currentItem().text()
+        mouse_position = QCursor.pos()
 
         if block_type == "For":
-            x, y, width, height = 0, 0, 100, 100  # Replace with actual values
+            x, y = mouse_position.x(), mouse_position.y()
+            print(x, y)
+            width, height = 200, 100  # Replace with actual values
             work_area = None  # Replace with actual work area
             block = ForBlockItem(x, y, width, height, work_area)
+            
+            
         
         elif block_type == "While":
-            x, y, width, height = 0, 0, 100, 100
+            x, y = mouse_position.x(), mouse_position.y()
+            width, height = 100, 100
             work_area = None
             block = WhileBlockItem(x, y, width, height, work_area)
             print("While")
         
         elif block_type == "Walk":
-            x, y, width, height = 0, 0, 100, 100
+            x, y = mouse_position.x(), mouse_position.y()
+            width, height = 100, 100
             work_area = None
             block = WalkBlockItem(x, y, width, height, work_area)
             print("Walk")
@@ -158,7 +171,7 @@ class WorkArea(QGraphicsView):
         Accepts the event.
         """
         event.accept()
-
+    
     def dropEvent(self, event):
         """
         Event handler for drop event.
@@ -168,16 +181,24 @@ class WorkArea(QGraphicsView):
         """
         block_type = event.mimeData().text()
 
-        # Get the position of the drop event relative to the view
-        pos = self.mapToScene(self.viewport().mapFromGlobal(QCursor.pos()))
+        
+        point = event.position().toPoint()
+        print(point)
+
+    
+        pos = self.mapToScene(point)
+        print(pos)
 
         x, y, width, height = pos.x(), pos.y(), 100, 100  # Define position and size
+        print(x, y, width, height)
 
         work_area = self  # Pass a reference to the work area
 
         if block_type == "For":
             block = ForBlockItem(x, y, width, height, work_area)
+            
             self.scene.addItem(block)  # Add the block to the scene
+            print(x, y, width, height)
 
         # Add conditions for other block types here
         elif block_type == "While":
@@ -187,7 +208,11 @@ class WorkArea(QGraphicsView):
             block = WalkBlockItem(x, y, width, height, work_area)
             self.scene.addItem(block)
 
+        block.setPos(pos.x() - width / 2, pos.y() - height / 2)
         event.acceptProposedAction()
+        self.scene.update()
+        print("Drop event at", pos.x(), pos.y())
+        print([item for item in self.scene.items()])
 
 
     def mouseDoubleClickEvent(self, event):
@@ -218,18 +243,7 @@ class WorkArea(QGraphicsView):
         factor = 1.15 if event.angleDelta().y() > 0 else 1 / 1.15
         self.scale(factor, factor)
 
-    def mousePressEvent(self, event):
-        """
-        Event handler for mouse press event.
-
-        Starts panning when the middle mouse button is pressed.
-
-        Args:
-            event: The mouse press event.
-        """
-        if event.button() == Qt.MouseButton.RightButton:
-            self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
-        super().mousePressEvent(event)
+    
 
     def mouseReleaseEvent(self, event):
         """
