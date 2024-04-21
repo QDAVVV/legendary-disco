@@ -358,6 +358,9 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(main_layout)  # Set the main layout on the central widget
         self.setCentralWidget(central_widget)  # Set the central widget on the window
         self.setWindowIcon(QIcon('hehehe'))  
+
+    def widgets(self):
+        return self.findChildren(QWidget)
         
     
 

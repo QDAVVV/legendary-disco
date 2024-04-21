@@ -1,3 +1,4 @@
+from UI import UI
 class ForBlock:
     def __init__(self, var, range_start, range_end, body_block):
         self.var = var
@@ -217,9 +218,28 @@ class ConnectBlock:
 
         
 
-#blocks = get_blocks_from_ui()
+def get_blocks_from_ui():
+    blocks = []
+    for widget in UI.widgets():
+        if isinstance(widget, ForBlock):
+            blocks.append(ForBlock(widget.variable_edit.text(), widget.range_start_edit.text(), widget.range_end_edit.text(), get_blocks_from_ui(widget)))
+        if isinstance(widget, WhileBlock):
+            blocks.append(WhileBlock(widget.condition_edit.text(), get_blocks_from_ui(widget)))
+        if isinstance(widget, WalkBlock):
+            blocks.append(WalkBlock(widget.steps_edit.text()))
+        if isinstance(widget, DanceBlock):
+            blocks.append(DanceBlock(widget.dance_edit.text()))
+        if isinstance(widget, RotateBlock):
+            blocks.append(RotateBlock(widget.angle_edit.text()))
+        if isinstance(widget, SideStepBlock):
+            blocks.append(SideStepBlock(widget.steps_edit.text()))
+        if isinstance(widget, ScanBlock):
+            blocks.append(ScanBlock())
+        
+    return blocks
+        
 
-blocks = [
+blockss = [
     ForBlock("i",0,10,[WalkBlock(10),RotateBlock(90)]),
     WhileBlock("True",[WalkBlock(10),RotateBlock(90)]),
     WalkBlock(10),
@@ -231,7 +251,7 @@ blocks = [
     StopBlock()
 ]
 code = ""
-for block in blocks:
+for block in blockss:
     code += block.to_python_code()
 
 # Exécutez le code
