@@ -27,6 +27,7 @@ class ForBlockItem(QGraphicsProxyWidget):
         view = QGraphicsView()
         
         
+        
 
         # Set the scene of the QGraphicsView to the scene
         scene = QGraphicsScene()
@@ -299,9 +300,9 @@ class MainWindow(QMainWindow):
         self.work_area = WorkArea(self)
         self.block_list = BlockList(self)
 
-        block_names = ["For", "While", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Fall"]
+        block_names = ["Connection","For", "While","If","Else","Elif", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Wait"]
 
-        for i in range(10):
+        for i in range(len(block_names)):
             item = QListWidgetItem(block_names[i])
             self.block_list.addItem(item)
 
@@ -310,7 +311,7 @@ class MainWindow(QMainWindow):
 
         button_layout = QVBoxLayout()
 
-        for i in range(7):
+        for i in range(len(button_names)):
             button = QPushButton(button_names[i])
             button_layout.addWidget(button)
             
@@ -328,6 +329,23 @@ class MainWindow(QMainWindow):
                 button.clicked.connect(self.turn_left_clicked)
             elif button_names[i] == "Turn Right":
                 button.clicked.connect(self.turn_right_clicked)
+        
+         # Create a QGraphicsView
+        self.view = QGraphicsView()
+
+        # Set the scene of the QGraphicsView to the scene
+        self.scene = QGraphicsScene()
+        self.view.setScene(self.scene)
+
+        # Now you can add the QGraphicsView to your main widget
+        self.setCentralWidget(self.view)
+
+        # Create blocks and add them to the scene
+        self.for_block = ForBlockItem(0, 0, 100, 100, None)
+        self.scene.addItem(self.for_block)
+
+        self.while_block = WhileBlockItem(200, 0, 100, 100, None)
+        self.scene.addItem(self.while_block)
             
         
 

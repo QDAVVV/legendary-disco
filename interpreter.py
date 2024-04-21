@@ -1,20 +1,37 @@
 class ForBlock:
-    def __init__(self,var,range_start,range_end,body_block):
+    def __init__(self, var, range_start, range_end, body_block):
         self.var = var
         self.range_start = range_start
         self.range_end = range_end
         self.body_block = body_block
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.inputs = block
+    
+    def set_output(self, block):
+        self.output = block
     
     def to_python_code(self):
-        body_code=""
+        body_code = ""
         for block in self.body_block:
-            body_code += "    " + block.to_python_code() 
-        return f"for {self.var} in range({self.range_start},{self.range_end}):\n{body_code}"
+            body_code += "    " + block.to_python_code()
+        return f"for {self.var} in range({self.range_start}, {self.range_end}):\n{body_code}"
+
 
 class WhileBlock:
     def __init__(self,condition,body_block):
         self.condition = condition
         self.body_block = body_block
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.inputs=block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         body_code=""
@@ -25,6 +42,14 @@ class WhileBlock:
 class WalkBlock:
     def __init__(self,distance):
         self.distance = distance
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return f"walk({self.distance})\n"
@@ -32,6 +57,14 @@ class WalkBlock:
 class DanceBlock:
     def __init__(self,dance_name):
         self.dance_name = dance_name
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return f"dance({self.dance_name})\n"
@@ -39,6 +72,14 @@ class DanceBlock:
 class RotateBlock:
     def __init__(self,angle):
         self.angle = angle
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return f"rotate({self.angle})\n"
@@ -46,6 +87,14 @@ class RotateBlock:
 class SideStepBlock:
     def __init__(self,distance):
         self.distance = distance
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return f"side_step({self.distance})\n"
@@ -53,6 +102,14 @@ class SideStepBlock:
 class ScanBlock:
     def __init__(self):
         pass
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return "scan()\n"
@@ -60,6 +117,14 @@ class ScanBlock:
 class EyeMoveBlock:
     def __init__(self,direction):
         self.direction = direction
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return f"eye_move({self.direction})\n"
@@ -67,14 +132,93 @@ class EyeMoveBlock:
 class StopBlock:
     def __init__(self):
         pass
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
 
     def to_python_code(self):
         return "stop()\n"
     
+class IfBlock:
+    def __init__(self,condition,body_block):
+        self.condition = condition
+        self.body_block = body_block
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
+
+    def to_python_code(self):
+        body_code=""
+        for block in self.body_block:
+            body_code+="    "+block.to_python_code()
+        return f"if {self.condition}:\n{body_code}"
+
+class ElseBlock:
+    def __init__(self,body_block):
+        self.body_block = body_block
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
+
+    def to_python_code(self):
+        body_code=""
+        for block in self.body_block:
+            body_code+="    "+block.to_python_code()
+        return f"else:\n{body_code}"
+
+class ElifBlock:
+    def __init__(self,condition,body_block):
+        self.condition = condition
+        self.body_block = body_block
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
+
+    def to_python_code(self):
+        body_code=""
+        for block in self.body_block:
+            body_code+="    "+block.to_python_code()
+        return f"elif {self.condition}:\n{body_code}"
+    
+class ConnectBlock:
+    def __init__(self,robot_name):
+        self.robot_name = robot_name
+        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+        self.output = None  # Bloc connecté en sortie
+    
+    def add_input(self, block):
+        self.input = block
+    
+    def set_output(self, block):
+        self.output = block
+
+    def to_python_code(self):
+        return f"connect({self.robot_name})\n"
 
         
 
 #blocks = get_blocks_from_ui()
+
 blocks = [
     ForBlock("i",0,10,[WalkBlock(10),RotateBlock(90)]),
     WhileBlock("True",[WalkBlock(10),RotateBlock(90)]),
