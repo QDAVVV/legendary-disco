@@ -12,8 +12,7 @@ class ConnectionPoint(QGraphicsEllipseItem):
         self.hover_color = Qt.GlobalColor.green
         self.clicked_color = Qt.GlobalColor.red
         self.setBrush(self.default_color)
-        # Activer la réception des événements de survol
-        self.setAcceptHoverEvents(True)
+       
 
     def hoverEnterEvent(self, event):
         self.setBrush(self.hover_color)
@@ -24,6 +23,7 @@ class ConnectionPoint(QGraphicsEllipseItem):
         super().hoverLeaveEvent(event)
 
     def mousePressEvent(self, event):
+        print("Mouse Pressed on Connection Point")
         self.setBrush(self.clicked_color)
         super().mousePressEvent(event)
 
@@ -32,17 +32,7 @@ class ConnectionPoint(QGraphicsEllipseItem):
         super().mouseReleaseEvent(event)
 
 
-class BlockBase(QWidget):
-    """
-    A custom QWidget subclass that serves as the base class for all blocks.
-    """
-    class BlockBase(QWidget):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            layout = QVBoxLayout()
-            label = QLabel("Block")
-            layout.addWidget(label)
-            self.setLayout(layout)
+
 
 class ForBlockWidget(QGraphicsWidget):
     def __init__(self):
@@ -79,6 +69,7 @@ class ForBlockWidget(QGraphicsWidget):
         
 
     def add_input_connection_points(self):
+        print("Adding input connection points")
         width = self.size().width()
         height = self.size().height()
 
@@ -90,31 +81,26 @@ class ForBlockWidget(QGraphicsWidget):
         input_point2.setPos(width * 0.9, height * 0.75)
         input_point2.setRect(-5, -5, 10, 10)
 
-        # Add input points to the scene
-        scene = self.scene()
-        if scene:
-            scene.addItem(input_point1)
-            scene.addItem(input_point2)
-
 
         self.input_connection_points.extend([input_point1, input_point2])
 
+        # Ajouter les points de connexion à la scène
+        for point in [input_point1, input_point2]:
+            self.scene().addItem(point)
+
     def add_output_connection_points(self):
+        print("Adding output connection points")
         width = self.size().width()
-        print(width)
         height = self.size().height()
-        print(height)
 
         output_point = ConnectionPoint(self)
         output_point.setPos(width * 0.1, height * 0.5)
         output_point.setRect(-5, -5, 10, 10)
 
-        scene = self.scene()
-        if scene:
-            scene.addItem(output_point)
-
-
         self.output_connection_points.append(output_point)
+
+        # Ajouter le point de connexion de sortie à la scène
+        self.scene().addItem(output_point)
 
     def paint(self, painter, option, widget):
         

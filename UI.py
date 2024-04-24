@@ -1,30 +1,14 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem,QGraphicsRectItem,QGraphicsWidget, QGraphicsProxyWidget
-from PyQt6.QtCore import Qt, QMimeData, QRectF
-from PyQt6.QtGui import QDrag, QCursor, QIcon
+from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem,QGraphicsRectItem,QGraphicsWidget, QGraphicsProxyWidget,QGraphicsEllipseItem, QGraphicsLineItem
+from PyQt6.QtCore import Qt, QMimeData, QRectF, QPoint
+from PyQt6.QtGui import QDrag, QCursor, QIcon,QPen
 
-from design import BlockBase
-from design import ForBlockWidget
-from design import WhileBlockWidget
-from design import WalkBlockWidget
-from design import ConnectionPoint
-from PyQt6.QtWidgets import QGraphicsEllipseItem
-from PyQt6.QtCore import QPoint
-from PyQt6.QtWidgets import QGraphicsLineItem
-from PyQt6.QtGui import QPen
+from design import ForBlockWidget, WhileBlockWidget, WalkBlockWidget
 
-#Création class Block
-class Block(QGraphicsWidget, BlockBase):
-    def __init__(self, x, y, width, height, work_area):
-        QGraphicsWidget.__init__(self)
-        BlockBase.__init__(self)
-        self.setGeometry(x, y, width, height)
-        self.work_area = work_area
 
 class ForBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
         super().__init__()
         self.setGeometry(QRectF(x, y, width, height))
-        print(x, y, width, height)
         self.work_area = work_area
         self.for_block = ForBlockWidget()
         
@@ -35,22 +19,21 @@ class ForBlockItem(QGraphicsProxyWidget):
         scene = QGraphicsScene()
         scene.addItem(self.for_block)
 
-        # Add input connection points to the scene
-        for input_point in self.for_block.input_connection_points:
-            scene.addItem(input_point)
-        
-        # Add output connection points to the scene
-        for output_point in self.for_block.output_connection_points:
-            scene.addItem(output_point)
-
         view.setScene(scene)
         
 
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
 
+        # Passer les événements de souris aux points de connexion
+        for point in self.for_block.input_connection_points:
+            point.setParentItem(self)
+        for point in self.for_block.output_connection_points:
+            point.setParentItem(self)
+
         # Activer la réception des événements de survol
         self.setAcceptHoverEvents(True)
+    
         
 class WhileBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
@@ -121,7 +104,6 @@ class BlockList(QListWidget):
 
         if block_type == "For":
             x, y = mouse_position.x(), mouse_position.y()
-            print(x, y)
             width, height = 200, 100  # Replace with actual values
             work_area = None  # Replace with actual work area
             block = ForBlockItem(x, y, width, height, work_area)
@@ -241,22 +223,33 @@ class WorkArea(QGraphicsView):
 
         
         point = event.position().toPoint()
-        print(point)
+        
 
     
         pos = self.mapToScene(point)
-        print(pos)
+        
 
         x, y, width, height = pos.x(), pos.y(), 100, 100  # Define position and size
-        print(x, y, width, height)
+        
 
         work_area = self  # Pass a reference to the work area
 
         if block_type == "For":
+            print("For")
             block = ForBlockItem(x, y, width, height, work_area)
             
             self.scene.addItem(block)  # Add the block to the scene
-            print(x, y, width, height)
+            
+             # Ajouter les points de connexion de block à la scène
+            for input_point in block.for_block.input_connection_points:
+                self.scene.addItem(input_point)
+                print("Input point")
+                print(input_point)
+                
+            for output_point in block.for_block.output_connection_points:
+                self.scene.addItem(output_point)
+                print("Output point")
+                print(output_point)
 
         # Add conditions for other block types here
         elif block_type == "While":
@@ -302,7 +295,7 @@ class WorkArea(QGraphicsView):
         self.scale(factor, factor)
     
     def mousePressEvent(self, event):
-        print("Mouse press event")
+        print("Mouse press event on")
         # Récupérer la position de la souris dans la scène
         scene_pos = self.mapToScene(event.pos())
 
@@ -313,6 +306,12 @@ class WorkArea(QGraphicsView):
         items = self.items(scene_pos_int)
         print("Liste des éléments de la scène :")
         for item in items:
+            print("Type d'élément :", type(item))
+            print("Position :", item.pos())
+
+        colliding_items = self.collidingItems()
+        print("Liste des éléments en collision :")
+        for item in colliding_items:
             print("Type d'élément :", type(item))
             print("Position :", item.pos())
         
