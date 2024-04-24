@@ -6,6 +6,11 @@ from design import BlockBase
 from design import ForBlockWidget
 from design import WhileBlockWidget
 from design import WalkBlockWidget
+from design import ConnectionPoint
+from PyQt6.QtWidgets import QGraphicsEllipseItem
+from PyQt6.QtCore import QPoint
+from PyQt6.QtWidgets import QGraphicsLineItem
+from PyQt6.QtGui import QPen
 
 #Création class Block
 class Block(QGraphicsWidget, BlockBase):
@@ -26,17 +31,27 @@ class ForBlockItem(QGraphicsProxyWidget):
          # Create a QGraphicsView
         view = QGraphicsView()
         
-        
-        
-
         # Set the scene of the QGraphicsView to the scene
         scene = QGraphicsScene()
         scene.addItem(self.for_block)
+
+        # Add input connection points to the scene
+        for input_point in self.for_block.input_connection_points:
+            scene.addItem(input_point)
+        
+        # Add output connection points to the scene
+        for output_point in self.for_block.output_connection_points:
+            scene.addItem(output_point)
+
         view.setScene(scene)
         
 
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
+
+        # Activer la réception des événements de survol
+        self.setAcceptHoverEvents(True)
+        
 class WhileBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
         super().__init__()
@@ -133,7 +148,43 @@ class BlockList(QListWidget):
         drag.setMimeData(mime_data)
         drag.exec()
 
+class ConnectionManager:
+    def __init__(self):
+        self.connections = []
 
+    def add_connection(self, start_block, end_block):
+        """
+        Add a connection between two blocks.
+
+        Args:
+            start_block: The block where the connection starts.
+            end_block: The block where the connection ends.
+        """
+        self.connections.append((start_block, end_block))
+
+    def remove_connection(self, start_block, end_block):
+        """
+        Remove a connection between two blocks.
+
+        Args:
+            start_block: The block where the connection starts.
+            end_block: The block where the connection ends.
+        """
+        if (start_block, end_block) in self.connections:
+            self.connections.remove((start_block, end_block))
+
+    def has_connection(self, start_block, end_block):
+        """
+        Check if there is a connection between two blocks.
+
+        Args:
+            start_block: The block where the connection starts.
+            end_block: The block where the connection ends.
+
+        Returns:
+            True if there is a connection, False otherwise.
+        """
+        return (start_block, end_block) in self.connections
     
 
 class WorkArea(QGraphicsView):
@@ -154,7 +205,13 @@ class WorkArea(QGraphicsView):
         self.setAcceptDrops(True)
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
+        self.setSceneRect(0, 0, 800, 600)  # Définir la taille de la scène
+        self.installEventFilter(self)  # Installer un filtre d'événement sur l'objet lui-même
+        self.setMouseTracking(True)  # Activer le suivi de la souris même sans clic
         self.last_y = 0
+        self.connection_manager = ConnectionManager()
+        self.temp_connection_start = None  # Point de départ temporaire pour la connexion en cours
+        self.temp_connection_end = None  # Point de fin temporaire pour la connexion en cours
 
     def dragEnterEvent(self, event):
         """
@@ -243,21 +300,75 @@ class WorkArea(QGraphicsView):
         """
         factor = 1.15 if event.angleDelta().y() > 0 else 1 / 1.15
         self.scale(factor, factor)
+    
+    def mousePressEvent(self, event):
+        print("Mouse press event")
+        # Récupérer la position de la souris dans la scène
+        scene_pos = self.mapToScene(event.pos())
+
+        # Convertir les coordonnées QPointF en coordonnées entières
+        scene_pos_int = QPoint(int(scene_pos.x()), int(scene_pos.y()))
+
+        # Récupérer les éléments de la scène à la position donnée
+        items = self.items(scene_pos_int)
+        print("Liste des éléments de la scène :")
+        for item in items:
+            print("Type d'élément :", type(item))
+            print("Position :", item.pos())
+        
+
+        # Vérifier si le clic est sur un point de connexion
+        for item in items:
+            if isinstance(item, QGraphicsEllipseItem) and getattr(item, 'isConnectionPoint', True):
+                print(f"Point de connexion cliqué : {item}")
+                if self.temp_connection_start is None:
+                    # Si c'est le premier point de connexion sélectionné, enregistrer le point de départ temporaire
+                    self.temp_connection_start = item
+                elif self.temp_connection_start != item:
+                    # Si c'est le deuxième point de connexion sélectionné (différent du premier), enregistrer le point de fin temporaire
+                    self.temp_connection_end = item
+
+                    # Créer la connexion entre les deux blocs
+                    self.create_connection(self.temp_connection_start, self.temp_connection_end)
+
+                    # Réinitialiser les points de connexion temporaires
+                    self.temp_connection_start = None
+                    self.temp_connection_end = None
+        else:
+            super().mousePressEvent(event)
+
+
+    def mouseReleaseEvent(self, event):
+        print("Mouse release event")
+        # Réinitialiser les points de connexion temporaires si aucun point de connexion final n'a été sélectionné
+        self.temp_connection_start = None
+        self.temp_connection_end = None
+
+        super().mouseReleaseEvent(event)
+
+
+
+
+
+    def create_connection(self, start_point, end_point):
+        """
+        Crée une connexion entre deux points de connexion.
+
+        Args:
+            start_point: Le point de connexion de départ.
+            end_point: Le point de connexion de fin.
+        """
+        # Vous devrez ajuster cette méthode pour créer une ligne ou tout autre visuel pour représenter la connexion entre les blocs.
+        # Assurez-vous d'ajouter cette ligne ou ce visuel à la scène pour qu'il soit affiché correctement.
+        line = QGraphicsLineItem(start_point.pos().x(), start_point.pos().y(),
+                                  end_point.pos().x(), end_point.pos().y())
+        line.setPen(QPen(Qt.GlobalColor.blue, 2))
+        # Ajouter la connexion au gestionnaire de connexion
+        self.connection_manager.add_connection(start_point.parent_block, end_point.parent_block)
+    
 
     
 
-    def mouseReleaseEvent(self, event):
-        """
-        Event handler for mouse release event.
-
-        Stops panning when the middle mouse button is released.
-
-        Args:
-            event: The mouse release event.
-        """
-        if event.button() == Qt.MouseButton.RightButton:
-            self.setDragMode(QGraphicsView.DragMode.NoDrag)
-        super().mouseReleaseEvent(event)
 
 
 
