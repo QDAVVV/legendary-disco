@@ -44,8 +44,11 @@ class ForBlockWidget(QGraphicsWidget):
 
         # Add widgets for editing parameters
         variable_edit = QLineEdit("i")
+        variable_edit.setFixedWidth(30)
         range_start_edit = QLineEdit("0")
+        range_start_edit.setFixedWidth(30)
         range_end_edit = QLineEdit("10")
+        range_end_edit.setFixedWidth(30)
 
         variable_edit_proxy = QGraphicsProxyWidget()
         variable_edit_proxy.setWidget(variable_edit)

@@ -237,16 +237,19 @@ class WorkArea(QGraphicsView):
         if block_type == "For":
             print("For")
             block = ForBlockItem(x, y, width, height, work_area)
+            block.setZValue(1)
             
             self.scene.addItem(block)  # Add the block to the scene
             
              # Ajouter les points de connexion de block à la scène
             for input_point in block.for_block.input_connection_points:
+                input_point.setZValue(2) 
                 self.scene.addItem(input_point)
                 print("Input point")
                 print(input_point)
                 
             for output_point in block.for_block.output_connection_points:
+                output_point.setZValue(2) 
                 self.scene.addItem(output_point)
                 print("Output point")
                 print(output_point)
@@ -309,11 +312,7 @@ class WorkArea(QGraphicsView):
             print("Type d'élément :", type(item))
             print("Position :", item.pos())
 
-        colliding_items = self.collidingItems()
-        print("Liste des éléments en collision :")
-        for item in colliding_items:
-            print("Type d'élément :", type(item))
-            print("Position :", item.pos())
+        
         
 
         # Vérifier si le clic est sur un point de connexion
