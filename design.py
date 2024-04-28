@@ -23,7 +23,6 @@ class ConnectionPoint(QGraphicsEllipseItem):
         super().hoverLeaveEvent(event)
 
     def mousePressEvent(self, event):
-        print("Mouse Pressed on Connection Point")
         self.setBrush(self.clicked_color)
         super().mousePressEvent(event)
 
@@ -41,6 +40,8 @@ class ForBlockWidget(QGraphicsWidget):
         # Create a layout for organizing the internal widgets
         layout = QGraphicsLinearLayout(Qt.Orientation.Vertical)
         self.setLayout(layout)
+        self.input_connection_points = []
+        self.output_connection_points = []
 
         # Add widgets for editing parameters
         variable_edit = QLineEdit("i")
@@ -66,8 +67,7 @@ class ForBlockWidget(QGraphicsWidget):
         # Set the minimum size of the block
         layout.setMinimumSize(200, 100)
 
-        self.input_connection_points = []
-        self.output_connection_points = []
+        
 
         
 
@@ -88,11 +88,12 @@ class ForBlockWidget(QGraphicsWidget):
         self.input_connection_points.extend([input_point1, input_point2])
 
         # Ajouter les points de connexion à la scène
-        """
+        
         for point in [input_point1, input_point2]:
+            
             self.scene().addItem(point)
             print("Point added to scene")
-        """
+        
 
     def add_output_connection_points(self):
         
@@ -106,10 +107,10 @@ class ForBlockWidget(QGraphicsWidget):
         self.output_connection_points.append(output_point)
 
         # Ajouter le point de connexion de sortie à la scène
-        """
+        
         self.scene().addItem(output_point)
         print("Point added to scene")
-        """
+        
 
     def paint(self, painter, option, widget):
         

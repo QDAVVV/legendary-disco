@@ -3,6 +3,7 @@ from PyQt6.QtCore import Qt, QMimeData, QRectF, QPoint
 from PyQt6.QtGui import QDrag, QCursor, QIcon,QPen
 
 from design import ForBlockWidget, WhileBlockWidget,ConnectionPoint
+import pygame.mixer
 
 
 class ForBlockItem(QGraphicsProxyWidget):
@@ -25,12 +26,18 @@ class ForBlockItem(QGraphicsProxyWidget):
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
 
+        #Ajour des points de connexion
+        self.for_block.add_input_connection_points()  # Ajouter les points de connexion d'entrée
+        self.for_block.add_output_connection_points()  # Ajouter les points de connexion de sortie
+
+        scene.update()
         # Passer les événements de souris aux points de connexion
         for point in self.for_block.input_connection_points:
             point.setParentItem(self)
-            print("Mouse events passed to input points")
+            print("Mouse events passed to output points")
         for point in self.for_block.output_connection_points:
             point.setParentItem(self)
+            print("Mouse events passed to input points")
 
         # Activer la réception des événements de survol
         self.setAcceptHoverEvents(True)
@@ -209,8 +216,8 @@ class WorkArea(QGraphicsView):
             
             self.scene.addItem(block)  # Add the block to the scene
 
-            print(f"Number of input points: {len(block.for_block.input_connection_points)}")
-            print(f"Number of output points: {len(block.for_block.output_connection_points)}")
+            print(f"Number of output points: {len(block.for_block.input_connection_points)}")
+            print(f"Number of input points: {len(block.for_block.output_connection_points)}")
 
             for input_point in block.for_block.input_connection_points:
                 input_point.setZValue(2) 
@@ -383,6 +390,9 @@ class MainWindow(QMainWindow):
             parent: The parent widget (default: None).
         """
         super().__init__(parent)
+        pygame.mixer.init()
+        pygame.mixer.music.load('musique.mp3')
+        pygame.mixer.music.play(-1)
         self.setWindowTitle("Get Jinxed !")
         self.setGeometry(100, 100, 800, 600)
 
