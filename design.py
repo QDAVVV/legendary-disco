@@ -73,15 +73,27 @@ class ForBlockWidget(QGraphicsWidget):
 
     def add_input_connection_points(self):
         
-        width = self.size().width()
-        height = self.size().height()
+        width = self.boundingRect().width()
+        height = self.boundingRect().height()
 
         input_point1 = ConnectionPoint(self)
         input_point1.setPos(width * 0.9, height * 0.25)
+        
+         # Récupérer la position du point de connexion input_point
+        pos_input_point1 = input_point1.pos()
+
+        # Extraire les coordonnées X et Y de la position
+        x_input_point1 = pos_input_point1.x()
+        y_input_point1 = pos_input_point1.y()
+
+        # Afficher les coordonnées du point de connexion
+        print("Position point in add: (x={}, y={})".format(x_input_point1, y_input_point1))
+
         input_point1.setRect(-5, -5, 10, 10)
 
         input_point2 = ConnectionPoint(self)
         input_point2.setPos(width * 0.9, height * 0.75)
+        
         input_point2.setRect(-5, -5, 10, 10)
 
 
@@ -89,10 +101,10 @@ class ForBlockWidget(QGraphicsWidget):
 
         # Ajouter les points de connexion à la scène
         
-        for point in [input_point1, input_point2]:
+        for point in [input_point1, input_point2]: #A peut être retirer cause redondance
             
             self.scene().addItem(point)
-            print("Point added to scene")
+            
         
 
     def add_output_connection_points(self):
@@ -102,14 +114,15 @@ class ForBlockWidget(QGraphicsWidget):
 
         output_point = ConnectionPoint(self)
         output_point.setPos(width * 0.1, height * 0.5)
+        
         output_point.setRect(-5, -5, 10, 10)
 
         self.output_connection_points.append(output_point)
 
         # Ajouter le point de connexion de sortie à la scène
         
-        self.scene().addItem(output_point)
-        print("Point added to scene")
+        self.scene().addItem(output_point) #A peut être retirer cause redondance
+        
         
 
     def paint(self, painter, option, widget):

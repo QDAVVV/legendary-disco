@@ -34,10 +34,9 @@ class ForBlockItem(QGraphicsProxyWidget):
         # Passer les événements de souris aux points de connexion
         for point in self.for_block.input_connection_points:
             point.setParentItem(self)
-            print("Mouse events passed to output points")
         for point in self.for_block.output_connection_points:
             point.setParentItem(self)
-            print("Mouse events passed to input points")
+            
 
         # Activer la réception des événements de survol
         self.setAcceptHoverEvents(True)
@@ -203,7 +202,7 @@ class WorkArea(QGraphicsView):
         pos = self.mapToScene(point)
         
 
-        x, y, width, height = pos.x(), pos.y(), 100, 100  # Define position and size
+        x, y, width, height = pos.x(), pos.y(), 100, 100  
         
 
         work_area = self  # Pass a reference to the work area
@@ -212,36 +211,54 @@ class WorkArea(QGraphicsView):
             
             block = ForBlockItem(x, y, width, height, work_area)
             block.setZValue(0)
-            print("Z value of block is 0") 
+            
             
             self.scene.addItem(block)  # Add the block to the scene
 
             print(f"Number of output points: {len(block.for_block.input_connection_points)}")
             print(f"Number of input points: {len(block.for_block.output_connection_points)}")
 
-            for input_point in block.for_block.input_connection_points:
-                input_point.setZValue(2) 
-                print(f"Input point: {input_point}, Z value: {input_point.zValue()}")
-                self.scene.addItem(input_point)
-                            
-            for output_point in block.for_block.output_connection_points:
-                output_point.setZValue(2) 
-                print(f"Output point: {output_point}, Z value: {output_point.zValue()}")
-                self.scene.addItem(output_point)
+            
                         
             
              # Ajouter les points de connexion de block à la scène
             for input_point in block.for_block.input_connection_points:
                 input_point.setZValue(2) 
-                print("Z value of input point is 2")
-                self.scene.addItem(input_point)
-                print("Input point")
+                
+                self.scene.addItem(input_point) #A peut être retirer cause redondance
+
+                # Récupérer la position du point de connexion input_point
+                pos_input_point1 = input_point.pos()
+
+                # Extraire les coordonnées X et Y de la position
+                x_input_point1 = pos_input_point1.x()
+                y_input_point1 = pos_input_point1.y()
+
+                # Afficher les coordonnées du point de connexion
+                print("Position output_point: (x={}, y={})".format(x_input_point1, y_input_point1))
+
+                
+                
                 
                 
             for output_point in block.for_block.output_connection_points:
                 output_point.setZValue(2) 
-                self.scene.addItem(output_point)
-                print("Output point")
+                self.scene.addItem(output_point)#A peut être retirer cause redondance
+
+                 # Récupérer la position du point de connexion input_point1
+                pos_input_point1 = output_point.pos()
+
+                # Extraire les coordonnées X et Y de la position
+                x_input_point1 = pos_input_point1.x()
+                y_input_point1 = pos_input_point1.y()
+
+                # Afficher les coordonnées du point de connexion
+                print("Position input_point: (x={}, y={})".format(x_input_point1, y_input_point1))
+                
+
+                
+            
+
                 
 
         # Add conditions for other block types here
@@ -285,7 +302,7 @@ class WorkArea(QGraphicsView):
         self.scale(factor, factor)
     
     def mousePressEvent(self, event):
-        print("Mouse press event on")
+        
         # Récupérer la position de la souris dans la scène
         scene_pos = self.mapToScene(event.pos())
 
@@ -391,8 +408,8 @@ class MainWindow(QMainWindow):
         """
         super().__init__(parent)
         pygame.mixer.init()
-        pygame.mixer.music.load('musique.mp3')
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.load('musique.mp3')
+        #pygame.mixer.music.play(-1)
         self.setWindowTitle("Get Jinxed !")
         self.setGeometry(100, 100, 800, 600)
 
@@ -441,10 +458,10 @@ class MainWindow(QMainWindow):
 
         # Create blocks and add them to the scene
         self.for_block = ForBlockItem(0, 0, 100, 100, None)
-        self.scene.addItem(self.for_block)
+        self.scene.addItem(self.for_block) #A peut être retirer pour cause redondance
 
         self.while_block = WhileBlockItem(200, 0, 100, 100, None)
-        self.scene.addItem(self.while_block)
+        self.scene.addItem(self.while_block)#A peut être retirer pour cause redondance
             
         
 
