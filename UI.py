@@ -227,38 +227,13 @@ class WorkArea(QGraphicsView):
                 
                 self.scene.addItem(input_point) #A peut être retirer cause redondance
 
-                # Récupérer la position du point de connexion input_point
-                pos_input_point1 = input_point.pos()
-
-                # Extraire les coordonnées X et Y de la position
-                x_input_point1 = pos_input_point1.x()
-                y_input_point1 = pos_input_point1.y()
-
-                # Afficher les coordonnées du point de connexion
-                print("Position output_point: (x={}, y={})".format(x_input_point1, y_input_point1))
-
-                
-                
                 
                 
             for output_point in block.for_block.output_connection_points:
                 output_point.setZValue(2) 
                 self.scene.addItem(output_point)#A peut être retirer cause redondance
 
-                 # Récupérer la position du point de connexion input_point1
-                pos_input_point1 = output_point.pos()
-
-                # Extraire les coordonnées X et Y de la position
-                x_input_point1 = pos_input_point1.x()
-                y_input_point1 = pos_input_point1.y()
-
-                # Afficher les coordonnées du point de connexion
-                print("Position input_point: (x={}, y={})".format(x_input_point1, y_input_point1))
                 
-
-                
-            
-
                 
 
         # Add conditions for other block types here
@@ -311,12 +286,6 @@ class WorkArea(QGraphicsView):
 
         # Récupérer les éléments de la scène à la position donnée
         items = self.items(scene_pos_int)
-        print("Liste des éléments de la scène :")
-        for item in items:
-            print("Type d'élément :", type(item))
-            print("Position :", item.pos())
-
-        
         
 
         # Vérifier si le clic est sur un point de connexion
@@ -326,9 +295,12 @@ class WorkArea(QGraphicsView):
                 if self.temp_connection_start is None:
                     # Si c'est le premier point de connexion sélectionné, enregistrer le point de départ temporaire
                     self.temp_connection_start = item
-                elif self.temp_connection_start != item:
+                    print(f"Point de connexion de départ temporaire : {self.temp_connection_start}")
+
+                elif self.temp_connection_start != None and self.temp_connection_start != item:
                     # Si c'est le deuxième point de connexion sélectionné (différent du premier), enregistrer le point de fin temporaire
                     self.temp_connection_end = item
+                    print(f"Point de connexion de fin temporaire : {self.temp_connection_end}")
 
                     # Créer la connexion entre les deux blocs
                     self.create_connection(self.temp_connection_start, self.temp_connection_end)
@@ -360,6 +332,7 @@ class WorkArea(QGraphicsView):
             start_point: Le point de connexion de départ.
             end_point: Le point de connexion de fin.
         """
+        print(f"Créer une connexion entre {start_point} et {end_point}")
         # Vous devrez ajuster cette méthode pour créer une ligne ou tout autre visuel pour représenter la connexion entre les blocs.
         # Assurez-vous d'ajouter cette ligne ou ce visuel à la scène pour qu'il soit affiché correctement.
         line = QGraphicsLineItem(start_point.pos().x(), start_point.pos().y(),

@@ -77,22 +77,13 @@ class ForBlockWidget(QGraphicsWidget):
         height = self.boundingRect().height()
 
         input_point1 = ConnectionPoint(self)
-        input_point1.setPos(width * 0.9, height * 0.25)
+        input_point1.setPos(180,25)
         
-         # Récupérer la position du point de connexion input_point
-        pos_input_point1 = input_point1.pos()
-
-        # Extraire les coordonnées X et Y de la position
-        x_input_point1 = pos_input_point1.x()
-        y_input_point1 = pos_input_point1.y()
-
-        # Afficher les coordonnées du point de connexion
-        print("Position point in add: (x={}, y={})".format(x_input_point1, y_input_point1))
 
         input_point1.setRect(-5, -5, 10, 10)
 
         input_point2 = ConnectionPoint(self)
-        input_point2.setPos(width * 0.9, height * 0.75)
+        input_point2.setPos(180, 75)
         
         input_point2.setRect(-5, -5, 10, 10)
 
@@ -113,7 +104,7 @@ class ForBlockWidget(QGraphicsWidget):
         height = self.size().height()
 
         output_point = ConnectionPoint(self)
-        output_point.setPos(width * 0.1, height * 0.5)
+        output_point.setPos(20, 50)
         
         output_point.setRect(-5, -5, 10, 10)
 
