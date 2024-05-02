@@ -294,11 +294,13 @@ class WorkArea(QGraphicsView):
         for item in items:
             if isinstance(item, QGraphicsEllipseItem) and getattr(item, 'isConnectionPoint', True):
                 print(f"Point de connexion cliqué : {item}, Position : {item.pos()}, ID : {id(item)}")
+
                 if self.temp_connection_start is None:
                     # Premier point de connexion sélectionné
                     print(f"Point de connexion de départ temporaire : {self.temp_connection_start}")
                     self.temp_connection_start = item
                     print(f"Point de connexion de départ temporaire : {self.temp_connection_start}, Position : {self.temp_connection_start.pos()}, ID : {id(self.temp_connection_start)}")
+
                 elif id(self.temp_connection_start) != id(item) and self.temp_connection_start.pos() != item.pos():
                     # Deuxième point de connexion sélectionné (différent du premier)
                     self.temp_connection_end = item
@@ -321,9 +323,7 @@ class WorkArea(QGraphicsView):
 
     def mouseReleaseEvent(self, event):
         print("Mouse release event")
-        # Réinitialiser les points de connexion temporaires si aucun point de connexion final n'a été sélectionné
-        self.temp_connection_start = None
-        self.temp_connection_end = None
+        
 
         super().mouseReleaseEvent(event)
 
