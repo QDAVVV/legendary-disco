@@ -37,6 +37,8 @@ class ForBlockWidget(QGraphicsWidget):
     def __init__(self):
         super().__init__()
 
+        
+
         # Create a layout for organizing the internal widgets
         layout = QGraphicsLinearLayout(Qt.Orientation.Vertical)
         self.setLayout(layout)

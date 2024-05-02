@@ -15,6 +15,10 @@ class ForBlockItem(QGraphicsProxyWidget):
         
          # Create a QGraphicsView
         view = QGraphicsView()
+
+        # Désactiver les scrollbars verticales et horizontales
+        view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         
         # Set the scene of the QGraphicsView to the scene
         scene = QGraphicsScene()
@@ -277,7 +281,6 @@ class WorkArea(QGraphicsView):
         self.scale(factor, factor)
     
     def mousePressEvent(self, event):
-        
         # Récupérer la position de la souris dans la scène
         scene_pos = self.mapToScene(event.pos())
 
@@ -286,21 +289,20 @@ class WorkArea(QGraphicsView):
 
         # Récupérer les éléments de la scène à la position donnée
         items = self.items(scene_pos_int)
-        
 
         # Vérifier si le clic est sur un point de connexion
         for item in items:
             if isinstance(item, QGraphicsEllipseItem) and getattr(item, 'isConnectionPoint', True):
-                print(f"Point de connexion cliqué : {item}")
+                print(f"Point de connexion cliqué : {item}, Position : {item.pos()}, ID : {id(item)}")
                 if self.temp_connection_start is None:
-                    # Si c'est le premier point de connexion sélectionné, enregistrer le point de départ temporaire
-                    self.temp_connection_start = item
+                    # Premier point de connexion sélectionné
                     print(f"Point de connexion de départ temporaire : {self.temp_connection_start}")
-
-                elif self.temp_connection_start != None and self.temp_connection_start != item:
-                    # Si c'est le deuxième point de connexion sélectionné (différent du premier), enregistrer le point de fin temporaire
+                    self.temp_connection_start = item
+                    print(f"Point de connexion de départ temporaire : {self.temp_connection_start}, Position : {self.temp_connection_start.pos()}, ID : {id(self.temp_connection_start)}")
+                elif id(self.temp_connection_start) != id(item) and self.temp_connection_start.pos() != item.pos():
+                    # Deuxième point de connexion sélectionné (différent du premier)
                     self.temp_connection_end = item
-                    print(f"Point de connexion de fin temporaire : {self.temp_connection_end}")
+                    print(f"Point de connexion de fin temporaire : {self.temp_connection_end}, Position : {self.temp_connection_end.pos()}, ID : {id(self.temp_connection_end)}")
 
                     # Créer la connexion entre les deux blocs
                     self.create_connection(self.temp_connection_start, self.temp_connection_end)
@@ -308,8 +310,13 @@ class WorkArea(QGraphicsView):
                     # Réinitialiser les points de connexion temporaires
                     self.temp_connection_start = None
                     self.temp_connection_end = None
+                break  # Sortir de la boucle après traitement
+
         else:
             super().mousePressEvent(event)
+
+
+
 
 
     def mouseReleaseEvent(self, event):
