@@ -145,6 +145,13 @@ class ConnectionManager:
         """
         return (start_block, end_block) in self.connections
     
+    def print_connections(self):
+        """
+        Print all existing connections in the work area.
+        """
+        for connection in self.connections:
+            print(f"Connection from {connection[0]} to {connection[1]}")
+    
 
 class WorkArea(QGraphicsView):
     """
@@ -293,18 +300,18 @@ class WorkArea(QGraphicsView):
         # Vérifier si le clic est sur un point de connexion
         for item in items:
             if isinstance(item, QGraphicsEllipseItem) and getattr(item, 'isConnectionPoint', True):
-                print(f"Point de connexion cliqué : {item}, Position : {item.pos()}, ID : {id(item)}")
+                
 
                 if self.temp_connection_start is None:
                     # Premier point de connexion sélectionné
-                    print(f"Point de connexion de départ temporaire : {self.temp_connection_start}")
+                    
                     self.temp_connection_start = item
-                    print(f"Point de connexion de départ temporaire : {self.temp_connection_start}, Position : {self.temp_connection_start.pos()}, ID : {id(self.temp_connection_start)}")
+                    
 
                 elif id(self.temp_connection_start) != id(item) and self.temp_connection_start.pos() != item.pos():
                     # Deuxième point de connexion sélectionné (différent du premier)
                     self.temp_connection_end = item
-                    print(f"Point de connexion de fin temporaire : {self.temp_connection_end}, Position : {self.temp_connection_end.pos()}, ID : {id(self.temp_connection_end)}")
+                    
 
                     # Créer la connexion entre les deux blocs
                     self.create_connection(self.temp_connection_start, self.temp_connection_end)
@@ -323,6 +330,10 @@ class WorkArea(QGraphicsView):
 
     def mouseReleaseEvent(self, event):
         print("Mouse release event")
+
+        # Imprimer les connexions existantes
+        self.connection_manager.print_connections()
+        
         
 
         super().mouseReleaseEvent(event)
@@ -340,13 +351,21 @@ class WorkArea(QGraphicsView):
             end_point: Le point de connexion de fin.
         """
         print(f"Créer une connexion entre {start_point} et {end_point}")
-        # Vous devrez ajuster cette méthode pour créer une ligne ou tout autre visuel pour représenter la connexion entre les blocs.
-        # Assurez-vous d'ajouter cette ligne ou ce visuel à la scène pour qu'il soit affiché correctement.
-        line = QGraphicsLineItem(start_point.pos().x(), start_point.pos().y(),
-                                  end_point.pos().x(), end_point.pos().y())
+
+        # Récupérer les positions des points de connexion dans l'espace de la scène
+        start_pos = start_point.scenePos()
+        end_pos = end_point.scenePos()
+
+        # Créer une ligne entre les points de connexion
+        line = QGraphicsLineItem(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
         line.setPen(QPen(Qt.GlobalColor.blue, 2))
+
+        # Ajouter la ligne à la scène de la WorkArea
+        self.scene.addItem(line)
+
         # Ajouter la connexion au gestionnaire de connexion
         self.connection_manager.add_connection(start_point.parent_block, end_point.parent_block)
+
     
 
     

@@ -4,8 +4,9 @@ from PyQt6.QtCore import Qt, QRectF
 from PyQt6.QtWidgets import QGraphicsEllipseItem
 
 class ConnectionPoint(QGraphicsEllipseItem):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent_block, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent_block = parent_block
         self.setAcceptHoverEvents(True)
         self.isConnectionPoint = True
         self.default_color = Qt.GlobalColor.black
