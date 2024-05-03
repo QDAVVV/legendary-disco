@@ -46,6 +46,11 @@ class ForBlockWidget(QGraphicsWidget):
         self.input_connection_points = []
         self.output_connection_points = []
 
+        # Ajouter des étiquettes et des zones d'édition pour la variable, index début et index fin
+        variable_label = QLabel("Variable:")
+        index_start_label = QLabel("Index début:")
+        index_end_label = QLabel("Index fin:")
+
         # Add widgets for editing parameters
         variable_edit = QLineEdit("i")
         variable_edit.setFixedWidth(30)
@@ -63,9 +68,14 @@ class ForBlockWidget(QGraphicsWidget):
         range_end_edit_proxy = QGraphicsProxyWidget()
         range_end_edit_proxy.setWidget(range_end_edit)
 
+        
         layout.addItem(variable_edit_proxy)
         layout.addItem(range_start_edit_proxy)
         layout.addItem(range_end_edit_proxy)
+
+        # Ajouter des marges et des décalages si nécessaire
+        layout.setContentsMargins(50, 0, 0, 0)  # Marges autour du contenu
+        layout.setSpacing(10)  # Espacement entre les éléments
 
         # Set the minimum size of the block
         layout.setMinimumSize(200, 100)
@@ -76,28 +86,20 @@ class ForBlockWidget(QGraphicsWidget):
 
     def add_input_connection_points(self):
         
-        width = self.boundingRect().width()
-        height = self.boundingRect().height()
 
-        input_point1 = ConnectionPoint(self)
-        input_point1.setPos(180,25)
+        width = self.size().width()
+        height = self.size().height()
+
+        input_point = ConnectionPoint(self)
+        input_point.setPos(20, 50)
         
+        input_point.setRect(-5, -5, 10, 10)
 
-        input_point1.setRect(-5, -5, 10, 10)
+        self.output_connection_points.append(input_point)
 
-        input_point2 = ConnectionPoint(self)
-        input_point2.setPos(180, 75)
+        # Ajouter le point de connexion de sortie à la scène
         
-        input_point2.setRect(-5, -5, 10, 10)
-
-
-        self.input_connection_points.extend([input_point1, input_point2])
-
-        # Ajouter les points de connexion à la scène
-        
-        for point in [input_point1, input_point2]: #A peut être retirer cause redondance
-            
-            self.scene().addItem(point)
+        self.scene().addItem(input_point) #A peut être retirer cause redondance
             
         
 
@@ -106,16 +108,26 @@ class ForBlockWidget(QGraphicsWidget):
         width = self.size().width()
         height = self.size().height()
 
-        output_point = ConnectionPoint(self)
-        output_point.setPos(20, 50)
         
-        output_point.setRect(-5, -5, 10, 10)
-
-        self.output_connection_points.append(output_point)
-
-        # Ajouter le point de connexion de sortie à la scène
+        output_point1 = ConnectionPoint(self)
+        output_point1.setPos(180,25)
         
-        self.scene().addItem(output_point) #A peut être retirer cause redondance
+
+        output_point1.setRect(-5, -5, 10, 10)
+
+        output_point2 = ConnectionPoint(self)
+        output_point2.setPos(180, 75)
+        
+        output_point2.setRect(-5, -5, 10, 10)
+
+
+        self.input_connection_points.extend([output_point1, output_point2])
+
+        # Ajouter les points de connexion à la scène
+        
+        for point in [output_point1, output_point2]: #A peut être retirer cause redondance
+            
+            self.scene().addItem(point)
         
         
 
