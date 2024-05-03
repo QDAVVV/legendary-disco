@@ -97,6 +97,25 @@ class BlockList(QListWidget):
         button2 = QPushButton('Launch')
         button3 = QPushButton('Save')
 
+        
+
+        def clear(self):
+            print("Le bouton 'Clear' a été cliqué!")
+
+        button1.clicked.connect(clear)
+
+        def launch(self):
+            print("Le bouton 'Launch' a été cliqué!")
+
+        button2.clicked.connect(launch)
+
+        def save(self):
+            print("Le bouton 'Save' a été cliqué!")
+
+        button3.clicked.connect(save)
+
+        
+
         # Create the separator
         separator = QFrame()
         separator.setFrameShape(QFrame.Shape.HLine)
