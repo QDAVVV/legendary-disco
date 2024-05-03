@@ -1,9 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsTextItem, QGraphicsScene, QGraphicsView, QGraphicsItem,QGraphicsRectItem,QGraphicsWidget, QGraphicsProxyWidget,QGraphicsEllipseItem, QGraphicsLineItem
+from PyQt6.QtWidgets import QApplication, QMainWindow,QGridLayout, QPushButton, QVBoxLayout, QWidget, QListWidget, QListWidgetItem, QGraphicsScene, QGraphicsView, QGraphicsProxyWidget,QGraphicsEllipseItem, QGraphicsLineItem,QFrame
 from PyQt6.QtCore import Qt, QMimeData, QRectF, QPoint
 from PyQt6.QtGui import QDrag, QCursor, QIcon,QPen
 
 from design import ForBlockWidget, WhileBlockWidget,ConnectionPoint
-import pygame.mixer
+
 
 
 class ForBlockItem(QGraphicsProxyWidget):
@@ -81,6 +81,36 @@ class BlockList(QListWidget):
         """
         super().__init__(parent)
         self.setDragEnabled(True)
+          # Create the layout
+        self.layout = QVBoxLayout()
+
+        # Set the spacing between items in the layout
+        self.layout.setSpacing(0)  # No spacing between item
+        # Add the block list to the layout
+        self.setLayout(self.layout)
+
+        # Set a stretch to push buttons and separator to the bottom
+        self.layout.addStretch(1)
+
+        # Create the buttons
+        button1 = QPushButton('Clear')
+        button2 = QPushButton('Launch')
+        button3 = QPushButton('Save')
+
+        # Create the separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setFrameShadow(QFrame.Shadow.Sunken)
+
+        # Add the separator to the layout
+        self.layout.addWidget(separator)
+
+        # Add the buttons to the layout
+        self.layout.addWidget(button1)
+        self.layout.addWidget(button2)
+        self.layout.addWidget(button3)
+
+        
         
         
 
@@ -226,9 +256,6 @@ class WorkArea(QGraphicsView):
             
             self.scene.addItem(block)  # Add the block to the scene
 
-            print(f"Number of output points: {len(block.for_block.input_connection_points)}")
-            print(f"Number of input points: {len(block.for_block.output_connection_points)}")
-
             
                         
             
@@ -236,13 +263,13 @@ class WorkArea(QGraphicsView):
             for input_point in block.for_block.input_connection_points:
                 input_point.setZValue(2) 
                 
-                self.scene.addItem(input_point) #A peut être retirer cause redondance
+                
 
                 
                 
             for output_point in block.for_block.output_connection_points:
                 output_point.setZValue(2) 
-                self.scene.addItem(output_point)#A peut être retirer cause redondance
+                
 
                 
                 
@@ -350,7 +377,7 @@ class WorkArea(QGraphicsView):
             start_point: Le point de connexion de départ.
             end_point: Le point de connexion de fin.
         """
-        print(f"Créer une connexion entre {start_point} et {end_point}")
+        
 
         # Récupérer les positions des points de connexion dans l'espace de la scène
         start_pos = start_point.scenePos()
@@ -406,9 +433,7 @@ class MainWindow(QMainWindow):
             parent: The parent widget (default: None).
         """
         super().__init__(parent)
-        pygame.mixer.init()
-        #pygame.mixer.music.load('musique.mp3')
-        #pygame.mixer.music.play(-1)
+        
         self.setWindowTitle("Get Jinxed !")
         self.setGeometry(100, 100, 800, 600)
 

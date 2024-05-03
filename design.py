@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton,QGraphicsWidget, QGraphicsProxyWidget, QGraphicsLinearLayout
-from PyQt6.QtGui import QPainter, QColor, QPen
-from PyQt6.QtCore import Qt, QRectF
+from PyQt6.QtWidgets import  QLabel, QLineEdit,QGraphicsWidget, QGraphicsProxyWidget, QGraphicsLinearLayout
+from PyQt6.QtGui import QPainter
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QGraphicsEllipseItem
 
 class ConnectionPoint(QGraphicsEllipseItem):
