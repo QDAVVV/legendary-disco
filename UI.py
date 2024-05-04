@@ -30,6 +30,10 @@ class ForBlockItem(QGraphicsProxyWidget):
         # Now you can add the QGraphicsView to your main widget
         self.setWidget(view)
 
+        # Dictionnaire pour suivre l'état de chaque point de connexion
+        self.input_connection_states = {}
+        self.output_connection_states = {}
+
         #Ajour des points de connexion
         self.for_block.add_input_connection_points()  # Ajouter les points de connexion d'entrée
         self.for_block.add_output_connection_points()  # Ajouter les points de connexion de sortie
@@ -40,6 +44,13 @@ class ForBlockItem(QGraphicsProxyWidget):
             point.setParentItem(self)
         for point in self.for_block.output_connection_points:
             point.setParentItem(self)
+
+        # Initialiser l'état de chaque point de connexion comme disponible (True)
+        for point in self.input_connection_states:
+            self.input_connection_states[point] = True
+        
+        for point in self.output_connection_states:
+            self.output_connection_states[point] = True
             
 
         # Activer la réception des événements de survol
@@ -288,6 +299,7 @@ class WorkArea(QGraphicsView):
         self.connection_manager = ConnectionManager()
         self.temp_connection_start = None  # Point de départ temporaire pour la connexion en cours
         self.temp_connection_end = None  # Point de fin temporaire pour la connexion en cours
+        self.used_connection_points = set()  # Garder une trace des points de connexion utilisés
 
     def dragEnterEvent(self, event):
         """
@@ -461,28 +473,62 @@ class WorkArea(QGraphicsView):
             start_point: The starting connection point.
             end_point: The ending connection point.
         """
-        # Check if the connection already exists
-        if not self.connection_manager.has_connection(start_point.parent_block, end_point.parent_block):
-            # Retrieve scene positions of the connection points
+        # Vérifier si les points de connexion sont valides
+        if not self.is_valid_connection(start_point, end_point):
+            print("Connection not allowed - One or both connection points are already used")
+            return
+
+        # Ajouter la connexion dans le gestionnaire de connexions
+        start_block = start_point.parent_block
+        end_block = end_point.parent_block
+        if not self.connection_manager.has_connection(start_block, end_block):
+            # Créer la ligne de connexion dans la scène
             start_pos = start_point.scenePos()
             end_pos = end_point.scenePos()
-
-            # Create a line between the connection points
             line = QGraphicsLineItem(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
             line.setPen(QPen(Qt.GlobalColor.blue, 2))
-
-            # Add the line to the WorkArea scene
             self.scene.addItem(line)
 
-            # Determine the connection point coordinates
-            start_connection_point = start_point.pos()
-            end_connection_point = end_point.pos()
+            # Ajouter la connexion dans le gestionnaire de connexions
+            self.connection_manager.add_connection(start_block, end_block, start_point)
 
-            # Add the connection to the connection manager
-            self.connection_manager.add_connection(start_point.parent_block, end_point.parent_block, start_connection_point)
+            # Marquer les points de connexion comme utilisés
+            self.used_connection_points.add(start_point)
+            self.used_connection_points.add(end_point)
         else:
-            # Connection already exists, do not create a duplicate
             print("Connection already exists")
+
+    def is_valid_connection(self, start_point, end_point):
+        """
+        Check if the connection between two connection points is valid.
+
+        Args:
+            start_point: The starting connection point.
+            end_point: The ending connection point.
+
+        Returns:
+            True if the connection is valid, False otherwise.
+        """
+        start_block = start_point.parent_block
+        end_block = end_point.parent_block
+
+        # Vérifier si les blocs sont différents
+        if start_block == end_block:
+            return False
+
+        # Vérifier si les points de connexion sont déjà utilisés
+        if start_point in self.used_connection_points or end_point in self.used_connection_points:
+            return False
+
+        # Vérifier si une connexion entre ces blocs existe déjà dans le gestionnaire de connexions
+        if self.connection_manager.has_connection(start_block, end_block):
+            return False
+
+        return True
+
+    
+
+    
 
             
 
