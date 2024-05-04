@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import  QLabel, QLineEdit,QGraphicsWidget, QGraphicsProxyWidget, QGraphicsLinearLayout
+from PyQt6.QtWidgets import  QLabel, QLineEdit,QGraphicsWidget, QGraphicsProxyWidget, QGraphicsLinearLayout,QGraphicsGridLayout
 from PyQt6.QtGui import QPainter
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QGraphicsEllipseItem
@@ -41,15 +41,26 @@ class ForBlockWidget(QGraphicsWidget):
         
 
         # Create a layout for organizing the internal widgets
-        layout = QGraphicsLinearLayout(Qt.Orientation.Vertical)
+        layout = QGraphicsGridLayout()
         self.setLayout(layout)
         self.input_connection_points = []
         self.output_connection_points = []
 
         # Ajouter des étiquettes et des zones d'édition pour la variable, index début et index fin
-        variable_label = QLabel("Variable:")
+        variable_label = QLabel("FOR:")
         index_start_label = QLabel("Index début:")
         index_end_label = QLabel("Index fin:")
+
+       
+        variable_label.setStyleSheet(
+            "font-size: 8px; color: ; border: none; padding-right: 5px; background-color: transparent;"
+        )  
+
+        
+        
+
+        variable_label_proxy = QGraphicsProxyWidget()
+        variable_label_proxy.setWidget(variable_label)
 
         # Add widgets for editing parameters
         variable_edit = QLineEdit("i")
@@ -68,14 +79,15 @@ class ForBlockWidget(QGraphicsWidget):
         range_end_edit_proxy = QGraphicsProxyWidget()
         range_end_edit_proxy.setWidget(range_end_edit)
 
-        
-        layout.addItem(variable_edit_proxy)
-        layout.addItem(range_start_edit_proxy)
-        layout.addItem(range_end_edit_proxy)
+        layout.addItem(variable_label_proxy,0,0)
+        layout.addItem(variable_edit_proxy,0,1)
+        layout.addItem(range_start_edit_proxy,1,1)
+        layout.addItem(range_end_edit_proxy,2,1)
 
-        # Ajouter des marges et des décalages si nécessaire
-        layout.setContentsMargins(50, 0, 0, 0)  # Marges autour du contenu
-        layout.setSpacing(10)  # Espacement entre les éléments
+         # Adjust spacing and margins
+        layout.setHorizontalSpacing(10)  # Set horizontal spacing between columns
+        layout.setVerticalSpacing(5)  # Set vertical spacing between rows
+        layout.setContentsMargins(10, 10, 10, 10)  # Set margins around the layout
 
         # Set the minimum size of the block
         layout.setMinimumSize(200, 100)
@@ -87,8 +99,7 @@ class ForBlockWidget(QGraphicsWidget):
     def add_input_connection_points(self):
         
 
-        width = self.size().width()
-        height = self.size().height()
+        
 
         input_point = ConnectionPoint(self)
         input_point.setPos(20, 50)
@@ -105,8 +116,7 @@ class ForBlockWidget(QGraphicsWidget):
 
     def add_output_connection_points(self):
         
-        width = self.size().width()
-        height = self.size().height()
+        
 
         
         output_point1 = ConnectionPoint(self)
