@@ -56,8 +56,8 @@ class WalkBlock:
         return f"walk({self.distance})\n"
 
 class DanceBlock:
-    def __init__(self,dance_name):
-        self.dance_name = dance_name
+    def __init__(self):
+        pass
         self.inputs = None  # Liste pour stocker les blocs connectés en entrée
         self.output = None  # Bloc connecté en sortie
     
@@ -223,18 +223,7 @@ def get_blocks_from_ui():
     for widget in UI.widgets():
         if isinstance(widget, ForBlock):
             blocks.append(ForBlock(widget.variable_edit.text(), widget.range_start_edit.text(), widget.range_end_edit.text(), get_blocks_from_ui(widget)))
-        if isinstance(widget, WhileBlock):
-            blocks.append(WhileBlock(widget.condition_edit.text(), get_blocks_from_ui(widget)))
-        if isinstance(widget, WalkBlock):
-            blocks.append(WalkBlock(widget.steps_edit.text()))
-        if isinstance(widget, DanceBlock):
-            blocks.append(DanceBlock(widget.dance_edit.text()))
-        if isinstance(widget, RotateBlock):
-            blocks.append(RotateBlock(widget.angle_edit.text()))
-        if isinstance(widget, SideStepBlock):
-            blocks.append(SideStepBlock(widget.steps_edit.text()))
-        if isinstance(widget, ScanBlock):
-            blocks.append(ScanBlock())
+        
         
     return blocks
         

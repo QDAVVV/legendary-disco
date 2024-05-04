@@ -159,27 +159,66 @@ class BlockList(QListWidget):
 class ConnectionManager:
     def __init__(self):
         self.connections = []
+        self.connection_types = {}  # Dictionnaire pour stocker les types de connexion
 
-    def add_connection(self, start_block, end_block):
+    def add_connection(self, start_block, end_block, connection_point):
         """
-        Add a connection between two blocks.
-
-        Args:
-            start_block: The block where the connection starts.
-            end_block: The block where the connection ends.
-        """
-        self.connections.append((start_block, end_block))
-
-    def remove_connection(self, start_block, end_block):
-        """
-        Remove a connection between two blocks.
+        Add a connection between two blocks with a specific connection point.
 
         Args:
             start_block: The block where the connection starts.
             end_block: The block where the connection ends.
+            connection_point: The point of connection (tuple of coordinates).
         """
-        if (start_block, end_block) in self.connections:
-            self.connections.remove((start_block, end_block))
+        # Vérifier si une connexion entre les mêmes blocs avec le même type de connexion existe déjà
+        existing_connection = self.get_existing_connection(start_block, end_block)
+        if existing_connection:
+            # Si une connexion existe déjà, ne pas ajouter une nouvelle connexion
+            print(f"Connection already exists between {start_block} and {end_block} with type {existing_connection[2]}")
+            return
+
+        # Ajouter la nouvelle connexion
+        self.connections.append((start_block, end_block, connection_point))
+        
+        # Déterminer le type de connexion à partir du point de connexion
+        connection_type = self.get_connection_type(connection_point)
+        if connection_type:
+            # Convertir le QPointF en tuple (x, y) pour l'utiliser comme clé hashable
+            connection_point_tuple = (connection_point.x(), connection_point.y())
+            # Ajouter le type de connexion au dictionnaire de types de connexion
+            self.connection_types[(start_block, connection_point_tuple)] = connection_type
+
+    def get_existing_connection(self, start_block, end_block):
+        """
+        Get an existing connection between two blocks.
+
+        Args:
+            start_block: The block where the connection starts.
+            end_block: The block where the connection ends.
+
+        Returns:
+            The existing connection if found (start_block, end_block, connection_point), None otherwise.
+        """
+        for connection in self.connections:
+            if connection[0] == start_block and connection[1] == end_block:
+                return connection
+        return None
+
+
+    def remove_connection(self, start_block, end_block, connection_point):
+        """
+        Remove a connection between two blocks with a specific connection point.
+
+        Args:
+            start_block: The block where the connection starts.
+            end_block: The block where the connection ends.
+            connection_point: The point of connection (tuple of coordinates).
+        """
+        connection_tuple = (start_block, end_block, connection_point)
+        if connection_tuple in self.connections:
+            self.connections.remove(connection_tuple)
+            if (start_block, connection_point) in self.connection_types:
+                del self.connection_types[(start_block, connection_point)]
 
     def has_connection(self, start_block, end_block):
         """
@@ -193,13 +232,35 @@ class ConnectionManager:
             True if there is a connection, False otherwise.
         """
         return (start_block, end_block) in self.connections
-    
+
+    def get_connection_type(self, connection_point):
+        """
+        Determine the type of connection (input or output) based on the position of the connection point.
+
+        Args:
+            connection_point: The QPointF object representing the connection point.
+
+        Returns:
+            The connection type ('input' or 'output').
+        """
+        x = connection_point.x()
+        y = connection_point.y()
+
+        # Determine the connection type based on the y-coordinate of the connection point
+        if x == 180 and y == 25:
+            return 'body_code'  # This corresponds to the 'body_code' connection point
+        elif x == 180 and y == 75:
+            return 'loop_exit'  # This corresponds to the 'loop_exit' connection point
+        else:
+            return None  # Unknown connection type
+
     def print_connections(self):
         """
         Print all existing connections in the work area.
         """
         for connection in self.connections:
-            print(f"Connection from {connection[0]} to {connection[1]}")
+            start_block, end_block, connection_point = connection
+            print(f"Connection from {start_block} to {end_block} at {connection_point} ({self.get_connection_type(connection_point)})")
     
 
 class WorkArea(QGraphicsView):
@@ -346,25 +407,29 @@ class WorkArea(QGraphicsView):
         # Vérifier si le clic est sur un point de connexion
         for item in items:
             if isinstance(item, QGraphicsEllipseItem) and getattr(item, 'isConnectionPoint', True):
-                
 
                 if self.temp_connection_start is None:
                     # Premier point de connexion sélectionné
-                    
                     self.temp_connection_start = item
-                    
 
                 elif id(self.temp_connection_start) != id(item) and self.temp_connection_start.pos() != item.pos():
                     # Deuxième point de connexion sélectionné (différent du premier)
                     self.temp_connection_end = item
-                    
 
-                    # Créer la connexion entre les deux blocs
-                    self.create_connection(self.temp_connection_start, self.temp_connection_end)
+                    # Vérifier s'il existe déjà une connexion entre ces deux blocs
+                    start_block = self.temp_connection_start.parent_block
+                    end_block = self.temp_connection_end.parent_block
+
+                    if not self.connection_manager.has_connection(start_block, end_block):
+                        # Créer la connexion entre les deux blocs
+                        self.create_connection(self.temp_connection_start, self.temp_connection_end)
+                    else:
+                        print("Connection already exists")
 
                     # Réinitialiser les points de connexion temporaires
                     self.temp_connection_start = None
                     self.temp_connection_end = None
+
                 break  # Sortir de la boucle après traitement
 
         else:
@@ -390,27 +455,39 @@ class WorkArea(QGraphicsView):
 
     def create_connection(self, start_point, end_point):
         """
-        Crée une connexion entre deux points de connexion.
+        Create a connection between two connection points.
 
         Args:
-            start_point: Le point de connexion de départ.
-            end_point: Le point de connexion de fin.
+            start_point: The starting connection point.
+            end_point: The ending connection point.
         """
-        
+        # Check if the connection already exists
+        if not self.connection_manager.has_connection(start_point.parent_block, end_point.parent_block):
+            # Retrieve scene positions of the connection points
+            start_pos = start_point.scenePos()
+            end_pos = end_point.scenePos()
 
-        # Récupérer les positions des points de connexion dans l'espace de la scène
-        start_pos = start_point.scenePos()
-        end_pos = end_point.scenePos()
+            # Create a line between the connection points
+            line = QGraphicsLineItem(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
+            line.setPen(QPen(Qt.GlobalColor.blue, 2))
 
-        # Créer une ligne entre les points de connexion
-        line = QGraphicsLineItem(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
-        line.setPen(QPen(Qt.GlobalColor.blue, 2))
+            # Add the line to the WorkArea scene
+            self.scene.addItem(line)
 
-        # Ajouter la ligne à la scène de la WorkArea
-        self.scene.addItem(line)
+            # Determine the connection point coordinates
+            start_connection_point = start_point.pos()
+            end_connection_point = end_point.pos()
 
-        # Ajouter la connexion au gestionnaire de connexion
-        self.connection_manager.add_connection(start_point.parent_block, end_point.parent_block)
+            # Add the connection to the connection manager
+            self.connection_manager.add_connection(start_point.parent_block, end_point.parent_block, start_connection_point)
+        else:
+            # Connection already exists, do not create a duplicate
+            print("Connection already exists")
+
+            
+
+
+
 
     
 
