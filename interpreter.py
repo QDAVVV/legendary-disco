@@ -1,4 +1,5 @@
-from UI import UI
+from PyQt6.QtWidgets import QGraphicsWidget
+
 class ForBlock:
     def __init__(self, var, range_start, range_end, body_block):
         self.var = var
@@ -218,14 +219,7 @@ class ConnectBlock:
 
         
 
-def get_blocks_from_ui():
-    blocks = []
-    for widget in UI.widgets():
-        if isinstance(widget, ForBlock):
-            blocks.append(ForBlock(widget.variable_edit.text(), widget.range_start_edit.text(), widget.range_end_edit.text(), get_blocks_from_ui(widget)))
-        
-        
-    return blocks
+
         
 
 blockss = [
@@ -250,3 +244,42 @@ except Exception as e:
     print(f"Error: {e}")
 
 print(code)
+
+class WorkArea:
+    def __init__(self):
+        self.blocks = []  # Liste pour stocker tous les blocs
+        self.connections = []  # Liste pour stocker toutes les connexions entre les blocs
+    
+    def add_block(self, block):
+        self.blocks.append(block)
+    
+    def add_connection(self, connection):
+        self.connections.append(connection)
+    
+    def collect_blocks_and_connections(self, widget):
+        # Fonction récursive pour collecter tous les blocs et connexions
+        if isinstance(widget, QGraphicsWidget):
+            if hasattr(widget, 'input_connection_points') and hasattr(widget, 'output_connection_points'):
+                # Collecte le bloc
+                self.add_block(widget)
+
+                # Collecte les connexions
+                for output_point in widget.output_connection_points:
+                    for connection in output_point.connections:
+                        self.add_connection(connection)
+
+                # Parcours récursif des enfants
+                for child in widget.childItems():
+                    self.collect_blocks_and_connections(child)
+
+    def launch_program(self):
+        # Génère et exécute le programme visuel créé dans la work_area
+        code = ""
+        for block in self.blocks:
+            code += block.to_python_code()
+
+        # Exécute le code
+        try:
+            exec(code)
+        except Exception as e:
+            print(f"Error: {e}")

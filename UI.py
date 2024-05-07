@@ -116,6 +116,9 @@ class BlockList(QListWidget):
         button1.clicked.connect(clear)
 
         def launch(self):
+             # Lorsque le bouton "Launch" est cliqué, collecte les blocs et les connexions, puis lance le programme
+            self.work_area.collect_blocks_and_connections(self.work_area)
+            self.work_area.launch_program()
             print("Le bouton 'Launch' a été cliqué!")
 
         button2.clicked.connect(launch)
