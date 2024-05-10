@@ -226,7 +226,6 @@ blockss = [
     ForBlock("i",0,10,[WalkBlock(10),RotateBlock(90)]),
     WhileBlock("True",[WalkBlock(10),RotateBlock(90)]),
     WalkBlock(10),
-    DanceBlock("tango"),
     RotateBlock(90),
     SideStepBlock(10),
     ScanBlock(),
@@ -245,41 +244,4 @@ except Exception as e:
 
 print(code)
 
-class WorkArea:
-    def __init__(self):
-        self.blocks = []  # Liste pour stocker tous les blocs
-        self.connections = []  # Liste pour stocker toutes les connexions entre les blocs
-    
-    def add_block(self, block):
-        self.blocks.append(block)
-    
-    def add_connection(self, connection):
-        self.connections.append(connection)
-    
-    def collect_blocks_and_connections(self, widget):
-        # Fonction récursive pour collecter tous les blocs et connexions
-        if isinstance(widget, QGraphicsWidget):
-            if hasattr(widget, 'input_connection_points') and hasattr(widget, 'output_connection_points'):
-                # Collecte le bloc
-                self.add_block(widget)
 
-                # Collecte les connexions
-                for output_point in widget.output_connection_points:
-                    for connection in output_point.connections:
-                        self.add_connection(connection)
-
-                # Parcours récursif des enfants
-                for child in widget.childItems():
-                    self.collect_blocks_and_connections(child)
-
-    def launch_program(self):
-        # Génère et exécute le programme visuel créé dans la work_area
-        code = ""
-        for block in self.blocks:
-            code += block.to_python_code()
-
-        # Exécute le code
-        try:
-            exec(code)
-        except Exception as e:
-            print(f"Error: {e}")

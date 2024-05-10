@@ -6,6 +6,7 @@ from design import ForBlockWidget, WhileBlockWidget,ConnectionPoint
 
 
 
+
 class ForBlockItem(QGraphicsProxyWidget):
     def __init__(self, x, y, width, height, work_area):
         super().__init__()
@@ -91,9 +92,16 @@ class BlockList(QListWidget):
             parent: The parent widget (default: None).
         """
         super().__init__(parent)
+         # Créer la WorkArea
+        self.work_area = WorkArea()
+        
+        
+        
+        
         self.setDragEnabled(True)
           # Create the layout
         self.layout = QVBoxLayout()
+        
 
         # Set the spacing between items in the layout
         self.layout.setSpacing(0)  # No spacing between item
@@ -107,28 +115,8 @@ class BlockList(QListWidget):
         button1 = QPushButton('Clear')
         button2 = QPushButton('Launch')
         button3 = QPushButton('Save')
-
-        
-
-        def clear(self):
-            print("Le bouton 'Clear' a été cliqué!")
-
-        button1.clicked.connect(clear)
-
-        def launch(self):
-             # Lorsque le bouton "Launch" est cliqué, collecte les blocs et les connexions, puis lance le programme
-            self.work_area.collect_blocks_and_connections(self.work_area)
-            self.work_area.launch_program()
-            print("Le bouton 'Launch' a été cliqué!")
-
-        button2.clicked.connect(launch)
-
-        def save(self):
-            print("Le bouton 'Save' a été cliqué!")
-
-        button3.clicked.connect(save)
-
-        
+        button1.clicked.connect(self.clear)
+        button2.clicked.connect(self.launch)
 
         # Create the separator
         separator = QFrame()
@@ -142,6 +130,27 @@ class BlockList(QListWidget):
         self.layout.addWidget(button1)
         self.layout.addWidget(button2)
         self.layout.addWidget(button3)
+
+        
+
+    def clear(self):
+        print("Le bouton 'Clear' a été cliqué!")
+
+        
+
+    def launch(self):
+       
+
+        print("Le bouton 'Launch' a été cliqué!")
+
+    def save(self):
+            print("Le bouton 'Save' a été cliqué!")
+
+        
+
+        
+
+        
 
         
         
@@ -292,6 +301,7 @@ class WorkArea(QGraphicsView):
             parent: The parent widget (default: None).
         """
         super().__init__(parent)
+        
         self.setAcceptDrops(True)
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
@@ -530,7 +540,56 @@ class WorkArea(QGraphicsView):
         return True
 
     
+    def get_blocks(self):
+        blocks = []
+        for item in self.scene.items():
+            if isinstance(item, ForBlockItem) or isinstance(item, WhileBlockItem):
+                blocks.append(item)
+        return blocks
+    
+    def get_connections(self):
+        return self.connection_manager.connections
+    
+    def organize_blocks_for_execution(self):
+        blocks = self.get_blocks()
+        connections = self.get_connections()
 
+        # Initialiser les listes de blocs sans entrée et sans sortie
+        blocks_without_input = []
+        blocks_without_output = []
+
+        # Parcourir tous les blocs pour identifier ceux sans entrée et sans sortie
+        for block in blocks:
+            has_input = False
+            has_output = False
+            
+            # Vérifier les connexions entrantes et sortantes pour chaque bloc
+            for connection in connections:
+                start_block, end_block, connection_point = connection
+                if end_block == block:
+                    has_input = True
+                if start_block == block:
+                    has_output = True
+            
+            # Ajouter le bloc à la liste correspondante
+            if not has_input:
+                blocks_without_input.append(block)
+            if not has_output:
+                blocks_without_output.append(block)
+
+        # Identifier le premier bloc (sans entrée)
+        if blocks_without_input:
+            first_block = blocks_without_input[0]
+            print(f"Premier bloc à exécuter : {first_block}")
+        else:
+            print("Aucun premier bloc identifié")
+
+        # Identifier le dernier bloc (sans sortie)
+        if blocks_without_output:
+            last_block = blocks_without_output[-1]  # Utiliser le dernier bloc sans sortie
+            print(f"Dernier bloc à exécuter : {last_block}")
+        else:
+            print("Aucun dernier bloc identifié")
     
 
             
@@ -581,9 +640,10 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle("Get Jinxed !")
         self.setGeometry(100, 100, 800, 600)
-
         self.work_area = WorkArea(self)
-        self.block_list = BlockList(self)
+        self.block_list = BlockList(parent=self.work_area)
+        
+        
 
         block_names = ["Connection","For", "While","If","Else","Elif", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Wait"]
 
@@ -601,9 +661,9 @@ class MainWindow(QMainWindow):
             button_layout.addWidget(button)
             
             if button_names[i] == "On/Off":
-                button.clicked.connect(self.on_off_clicked)
+                button.clicked.connect(self.execute_program)
             elif button_names[i] == "Up":
-                button.clicked.connect(self.up_clicked)
+                button.clicked.connect(self.organize_blocks_and_execute)
             elif button_names[i] == "Down":
                 button.clicked.connect(self.down_clicked)
             elif button_names[i] == "Left":
@@ -646,11 +706,49 @@ class MainWindow(QMainWindow):
 
     def widgets(self):
         return self.findChildren(QWidget)
+    
+    def execute_program(self):
+        # Récupérer la zone de travail
+        work_area = self.work_area
+        
+        # Récupérer tous les blocs dans la zone de travail
+        blocks = work_area.get_blocks()
+        print(f"Nombre de blocs dans la zone de travail : {len(blocks)}")
+        
+        # Récupérer toutes les connexions dans la zone de travail
+        connections = work_area.get_connections()
+        print(f"Nombre de connexions dans la zone de travail : {len(connections)}")
+
+        # Maintenant tu peux utiliser ces blocs et connexions pour exécuter ton programme
+        # Par exemple, tu pourrais parcourir les blocs et exécuter les instructions en fonction des connexions
+        
+        # Exemple d'utilisation (à adapter selon tes besoins) :
+        for block in blocks:
+            print(f"Bloc à la position ({block.pos().x()}, {block.pos().y()})")
+            print(f"Type de bloc : {block.__class__.__name__}")
+        
+        for connection in connections:
+            start_block, end_block, connection_point = connection
+            print(f"Connexion de {start_block} à {end_block} au point {connection_point}")
+
+
+    def organize_blocks_and_execute(self):
+        # Récupérer la zone de travail
+        work_area = self.work_area
+        
+        # Organiser les blocs pour l'exécution
+        work_area.organize_blocks_for_execution()
+
+        # Maintenant tu peux utiliser ces informations pour créer une liste d'exécution
+        # et interpréter les actions à exécuter dans ton programme
+
+    
         
     
 
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
+    
     window.show()
     app.exec()
