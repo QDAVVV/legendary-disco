@@ -545,6 +545,7 @@ class WorkArea(QGraphicsView):
         for item in self.scene.items():
             if isinstance(item, ForBlockItem) or isinstance(item, WhileBlockItem):
                 blocks.append(item)
+        print(blocks)
         return blocks
     
     def get_connections(self):
@@ -552,44 +553,57 @@ class WorkArea(QGraphicsView):
     
     def organize_blocks_for_execution(self):
         blocks = self.get_blocks()
+        print("Blocks:", blocks)
         connections = self.get_connections()
+        print("Connections:", connections)  
 
-        # Initialiser les listes de blocs sans entrée et sans sortie
-        blocks_without_input = []
-        blocks_without_output = []
+        # Dictionnaire pour stocker les blocs et leurs connexions sortantes
+        next_blocks = {block: [] for block in blocks}
 
-        # Parcourir tous les blocs pour identifier ceux sans entrée et sans sortie
+        # Construire le dictionnaire des connexions sortantes
+        for start_block, end_block, connection_point in connections:
+            # Assurez-vous que start_block et end_block sont bien les objets prévus
+            if start_block in next_blocks:
+                next_blocks[start_block].append(end_block)
+            else:
+                print(f"start_block {start_block} not found in next_blocks keys")
+
+        # Trouver le premier bloc (sans entrée)
+        first_block = None
         for block in blocks:
-            has_input = False
-            has_output = False
-            
-            # Vérifier les connexions entrantes et sortantes pour chaque bloc
-            for connection in connections:
-                start_block, end_block, connection_point = connection
-                if end_block == block:
-                    has_input = True
-                if start_block == block:
-                    has_output = True
-            
-            # Ajouter le bloc à la liste correspondante
-            if not has_input:
-                blocks_without_input.append(block)
-            if not has_output:
-                blocks_without_output.append(block)
+            # Convertissez le bloc en ForBlockWidget si nécessaire pour la comparaison
+            if not any(start_block == block.widget() for _, _, start_block in connections):
+                first_block = block
+                break
 
-        # Identifier le premier bloc (sans entrée)
-        if blocks_without_input:
-            first_block = blocks_without_input[0]
-            print(f"Premier bloc à exécuter : {first_block}")
-        else:
-            print("Aucun premier bloc identifié")
+        # Trouver le dernier bloc (sans sortie)
+        last_block = None
+        for block in blocks:
+            # Convertissez le bloc en ForBlockWidget si nécessaire pour la comparaison
+            if not any(end_block == block.widget() for _, end_block, _ in connections):
+                last_block = block
+                break
 
-        # Identifier le dernier bloc (sans sortie)
-        if blocks_without_output:
-            last_block = blocks_without_output[-1]  # Utiliser le dernier bloc sans sortie
-            print(f"Dernier bloc à exécuter : {last_block}")
-        else:
-            print("Aucun dernier bloc identifié")
+        # Construire la liste ordonnée des blocs à exécuter
+        ordered_blocks = []
+        current_block = first_block
+
+        while current_block is not None:
+            ordered_blocks.append(current_block)
+
+            # Trouver le bloc suivant à exécuter en utilisant les connexions
+            next_block_list = next_blocks.get(current_block, [])
+            if next_block_list:
+                current_block = next_block_list[0]  # Prendre le premier bloc suivant
+            else:
+                current_block = None
+
+        print("Ordered Blocks:", ordered_blocks)
+        return ordered_blocks
+    
+    #Soit modifier la création des connexions afin d'avoir des Items,soit modifier afin que les Item soient reliées à des Item
+    
+    
     
 
             
