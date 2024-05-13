@@ -1,0 +1,15 @@
+Task assigned: 
+
+ Connexion/Déconnexion des robots via le protocole de communication
+ Création d’une interface graphique pour la récupération d’un robot et de son pilotage
+    o Avancer, reculer, tourner
+    o Emotion : gérer le regard de Marty, danser, célébrer
+    o Récupérer les données capteurs (distance, obstacle, niveau de batterie, flux vidéo, capteur couleur)
+    o Pilotage du déplacement du robot (par appui sur des boutons de l’interface, et par les touches du clavier)
+
+Objets à maîtriser:
+
+ Créer une interface graphique avec PyQt6
+ Insérer les commandes de base de gestion du robot
+    o Organiser ces commandes afin de les rendre user-friendly
+    o Faire effectuer à Marty les ordres données
