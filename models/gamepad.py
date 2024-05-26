@@ -17,6 +17,7 @@ class GameController:
         except Exception:
             print("Couldn't find a proper controller.")
             return
+        gamepad.led = 1 # Ne sert a rien mais faut pas le supprimer
 
         while True:
             events = inputs.get_gamepad()
