@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
             if name == "On/Off":
                 button.clicked.connect(self.work_area_function.on_off_clicked)
             elif name == "Up":
-                button.clicked.connect(self.work_area_function.down_clicked)
+                button.clicked.connect(self.work_area_function.up_clicked)
             elif name == "Down":
                 button.clicked.connect(self.work_area_function.down_clicked)
             elif name == "Left":

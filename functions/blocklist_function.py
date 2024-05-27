@@ -1,8 +1,10 @@
+from functions.marty_function import MartyFunction
 from ui.work_area import WorkArea
 from blocks.for_block_widget import ForBlockWidget
 from blocks.walk_block_widget import WalkBlockWidget
 from models.interpreter import ForBlock
 from models.interpreter import WalkBlock
+from models.interpreter import ConnectBlock
 
 class BlocklistFunction:
     def __init__(self,work_area):
@@ -75,8 +77,12 @@ class BlocklistFunction:
                 body_code = [self.convert_block_to_interpreter(b) for b in body_blocks]
                 code += ForBlock(var, range_start, range_end, body_code).to_python_code()
             elif isinstance(block_widget, WalkBlockWidget):
-                distance = block_widget.get_distance()
-                code += WalkBlock(distance).to_python_code()
+        # Pour le bloc Walk, nous appelons simplement la méthode to_python_code de WalkBlock
+                return WalkBlock(2).to_python_code()  # 2 pour avancer de deux pas
+            elif isinstance(block_widget, ConnectBlock):
+                # Appeler la méthode de connexion de MartyFunction avec l'adresse IP de Marty
+                marty_function = MartyFunction(self.marty_ip)
+                return marty_function.connect()
             # Ajoutez des conditions similaires pour d'autres types de blocs...
 
         print(code)
@@ -95,6 +101,11 @@ class BlocklistFunction:
             body_code = [self.convert_block_to_interpreter(b) for b in body_blocks]
             return ForBlock(var, range_start, range_end, body_code)
         elif isinstance(block_widget, WalkBlockWidget):
-            distance = block_widget.get_distance()
-            return f"walk({distance})"
+            return WalkBlock(2).to_python_code()
+        elif isinstance(block_widget, ConnectBlock):
+            marty_function = MartyFunction(self.marty_ip)
+        return marty_function.connect()
+        
+        
+            
         # Ajoutez des conditions similaires pour d'autres types de blocs...

@@ -67,6 +67,7 @@ class ConnectBlockManager:
         block = ConnectBlockItem(x, y, width, height, self.work_area)
         block.setZValue(0)
         self.scene.addItem(block)
+        print("Connect block added to scene")
 
         # Add block's connection points to the scene
         for input_point in block.connect_block.input_connection_points:

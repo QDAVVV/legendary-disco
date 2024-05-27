@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QG
 from PyQt6.QtCore import Qt, QPoint, QPointF, QMimeData
 from PyQt6.QtGui import QDrag, QPen, QBrush
 
+from blocks.connect_block_item import ConnectBlockItem
 from models.connection_manager import ConnectionManager
 from models.block_manager import BlockManager
 from blocks.connection_point import ConnectionPoint
@@ -107,6 +108,8 @@ class WorkArea(QGraphicsView):
                 blocks.append(item.for_block)
             elif isinstance(item, WalkBlockItem):
                 blocks.append(item.walk_block)
+            elif isinstance(item, ConnectBlockItem):
+                blocks.append(item.connect_block)
         return blocks
 
     def get_connections(self):

@@ -41,12 +41,17 @@ class ConnectBlockWidget(QGraphicsWidget):
         self.scene().addItem(input_point)
 
     def add_output_connection_points(self):
-        output_point = ConnectionPoint(self)
-        output_point.setPos(180, 75)
-        output_point.setRect(-5, -5, 10, 10)
+        output_point1 = ConnectionPoint(self)
+        output_point1.setPos(180, 25)
+        output_point1.setRect(-5, -5, 10, 10)
 
-        self.output_connection_points.append(output_point)
-        self.scene().addItem(output_point)
+        output_point2 = ConnectionPoint(self)
+        output_point2.setPos(180, 75)
+        output_point2.setRect(-5, -5, 10, 10)
+
+        self.output_connection_points.extend([output_point1, output_point2])
+        for point in [output_point1, output_point2]:
+            self.scene().addItem(point)
 
     def paint(self, painter, option, widget):
         if not self.input_connection_points:

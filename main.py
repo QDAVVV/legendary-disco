@@ -14,7 +14,7 @@ if __name__ == "__main__":
     with open("style.qss", "r") as f:
         app.setStyleSheet(f.read())
 
-    marty_ip = "192.168.0.101"  # Définissez l'adresse IP de Marty ici
+    marty_ip = "192.168.0.7"  # Définissez l'adresse IP de Marty ici
 
     # Initialisez WorkAreaFunction avec la zone de travail
     work_area_function = WorkAreaFunction(None)
