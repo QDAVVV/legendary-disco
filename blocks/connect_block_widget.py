@@ -1,11 +1,9 @@
-from PyQt6.QtWidgets import  QLabel, QLineEdit,QGraphicsWidget, QGraphicsProxyWidget, QGraphicsLinearLayout,QGraphicsGridLayout
+from PyQt6.QtWidgets import QLabel, QGraphicsWidget, QGraphicsProxyWidget, QGraphicsGridLayout
 from PyQt6.QtGui import QPainter
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QGraphicsEllipseItem
-
 from blocks.connection_point import ConnectionPoint
 
-class WalkBlockWidget(QGraphicsWidget):
+class ConnectBlockWidget(QGraphicsWidget):
     def __init__(self):
         super().__init__()
 
@@ -15,21 +13,16 @@ class WalkBlockWidget(QGraphicsWidget):
         self.input_connection_points = []
         self.output_connection_points = []
 
-        # Ajouter des étiquettes et des zones d'édition pour la distance
-        distance_label = QLabel("WALK:")
-        distance_label.setStyleSheet(
+        # Ajouter une étiquette pour CONNECT
+        connect_label = QLabel("CONNECT:")
+        connect_label.setStyleSheet(
             "font-size: 8px; color: ; border: none; padding-right: 5px; background-color: transparent;"
         )
         
-        distance_label_proxy = QGraphicsProxyWidget()
-        distance_label_proxy.setWidget(distance_label)
+        connect_label_proxy = QGraphicsProxyWidget()
+        connect_label_proxy.setWidget(connect_label)
 
-       
-
-        
-
-        layout.addItem(distance_label_proxy, 0, 0)
-        
+        layout.addItem(connect_label_proxy, 0, 0)
 
         # Adjust spacing and margins
         layout.setHorizontalSpacing(10)  # Set horizontal spacing between columns
@@ -48,17 +41,12 @@ class WalkBlockWidget(QGraphicsWidget):
         self.scene().addItem(input_point)
 
     def add_output_connection_points(self):
-        output_point1 = ConnectionPoint(self)
-        output_point1.setPos(180, 25)
-        output_point1.setRect(-5, -5, 10, 10)
+        output_point = ConnectionPoint(self)
+        output_point.setPos(180, 75)
+        output_point.setRect(-5, -5, 10, 10)
 
-        output_point2 = ConnectionPoint(self)
-        output_point2.setPos(180, 75)
-        output_point2.setRect(-5, -5, 10, 10)
-
-        self.output_connection_points.extend([output_point1, output_point2])
-        for point in [output_point1, output_point2]:
-            self.scene().addItem(point)
+        self.output_connection_points.append(output_point)
+        self.scene().addItem(output_point)
 
     def paint(self, painter, option, widget):
         if not self.input_connection_points:
@@ -75,5 +63,4 @@ class WalkBlockWidget(QGraphicsWidget):
 
         painter.setBrush(Qt.GlobalColor.red)
         painter.drawEllipse(self.output_connection_points[0].rect())
-        # Hide the second output connection point (body_code)
-        # You can choose to not draw it, or simply not add it to the scene
+        # The body_code connection point is hidden, so it is not added to the scene or drawn.

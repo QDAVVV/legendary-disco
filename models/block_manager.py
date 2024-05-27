@@ -1,5 +1,6 @@
 from blocks.for_block_item import ForBlockItem
 from blocks.walk_block_item import WalkBlockItem
+from blocks.connect_block_item import ConnectBlockItem
 
 class BlockManager:
     def __init__(self, scene, work_area):
@@ -8,6 +9,7 @@ class BlockManager:
         self.block_types = {
             "For": ForBlockManager,
             "Walk": WalkBlockManager,
+            "Connection": ConnectBlockManager
             # Ajoutez ici d'autres types de blocs avec leurs gestionnaires respectifs
         }
 
@@ -52,6 +54,25 @@ class WalkBlockManager:
             input_point.setZValue(2) 
 
         for output_point in block.walk_block.output_connection_points:
+            output_point.setZValue(2)
+
+        block.setPos(x - width / 2, y - height / 2)
+
+class ConnectBlockManager:
+    def __init__(self, scene, work_area):
+        self.scene = scene
+        self.work_area = work_area
+
+    def create_block(self, x, y, width, height):
+        block = ConnectBlockItem(x, y, width, height, self.work_area)
+        block.setZValue(0)
+        self.scene.addItem(block)
+
+        # Add block's connection points to the scene
+        for input_point in block.connect_block.input_connection_points:
+            input_point.setZValue(2) 
+
+        for output_point in block.connect_block.output_connection_points:
             output_point.setZValue(2)
 
         block.setPos(x - width / 2, y - height / 2)

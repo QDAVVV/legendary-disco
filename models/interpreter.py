@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QGraphicsWidget
+from functions.marty_function import MartyFunction
 
 class ForBlock:
     def __init__(self, var, range_start, range_end, body_block):
@@ -42,19 +43,20 @@ class WhileBlock:
         return f"while {self.condition}:\n{body_code}"
 
 class WalkBlock:
-    def __init__(self,distance):
+    def __init__(self, distance):
         self.distance = distance
         self.inputs = None  # Liste pour stocker les blocs connectés en entrée
         self.output = None  # Bloc connecté en sortie
-    
+
     def add_input(self, block):
         self.input = block
-    
+
     def set_output(self, block):
         self.output = block
 
     def to_python_code(self):
-        return f"walk({self.distance})\n"
+        # Générer le code Python pour faire avancer Marty de 2 pas droit devant lui
+        return f"MartyFunction.walk(steps={self.distance}, direction='auto', turn=0, step_length=35, step_time=1500)\n"
 
 class DanceBlock:
     def __init__(self):
@@ -203,19 +205,19 @@ class ElifBlock:
         return f"elif {self.condition}:\n{body_code}"
     
 class ConnectBlock:
-    def __init__(self,robot_name):
-        self.robot_name = robot_name
-        self.inputs = None  # Liste pour stocker les blocs connectés en entrée
+    def __init__(self, robot_ip):
+        self.robot_ip = robot_ip
+        self.inputs = []  # Liste pour stocker les blocs connectés en entrée
         self.output = None  # Bloc connecté en sortie
     
     def add_input(self, block):
-        self.input = block
+        self.inputs.append(block)
     
     def set_output(self, block):
         self.output = block
 
     def to_python_code(self):
-        return f"connect({self.robot_name})\n"
+        return f"marty = MartyFunction('{self.robot_ip}')\n"
 
         
 
