@@ -17,10 +17,6 @@ class MainWindow(QMainWindow):
         self.work_area = WorkArea(self)
 
         self.work_area_function = WorkAreaFunction(self.work_area)
-        marty_ip = "192.168.0.101"  # Définissez l'adresse IP de Marty ici
-        self.work_area_function.set_marty_ip(marty_ip)
-
-        
         self.blocklist_function = BlocklistFunction(self.work_area)
         self.block_list = BlockList(self.blocklist_function, parent=self.work_area)
 
