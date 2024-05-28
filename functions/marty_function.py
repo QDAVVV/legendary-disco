@@ -2,12 +2,17 @@ from martypy import Marty
 
 class MartyFunction:
     def __init__(self, marty_ip):
-        self.my_marty = Marty("wifi", marty_ip)
-        self.my_marty.stand_straight(1000, None)
+        self.marty_ip = marty_ip
+        self.my_marty = None
 
     def dance(self):
         """Make Marty dance."""
         self.my_marty.dance()
+
+    def connect(self):
+        """Connect to Marty"""
+        self.my_marty = Marty("wifi", self.marty_ip)
+        self.my_marty.stand_straight(1000, None)
 
     def stand_straight(self):
         """Make Marty stand straight."""
@@ -23,7 +28,10 @@ class MartyFunction:
 
     def walk(self, steps=2, direction='auto', turn=0, step_length=35, step_time=1500):
         """Make Marty walk."""
-        self.my_marty.walk(steps, direction, turn, step_length, step_time, None)
+        if self.my_marty:
+            self.my_marty.walk(steps, direction, turn, step_length, step_time, None)
+        else:
+            print("Marty is not connected")
 
     def sidestep(self, direction='right', steps=2, step_length=35, step_time=1000):
         """Make Marty sidestep."""
