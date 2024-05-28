@@ -40,6 +40,7 @@ class MartyFunction:
         """Make Marty walk."""
         if self.my_marty:
             self.my_marty.walk(steps, direction, turn, step_length, step_time, None)
+            self.play_music("sounds/edm.mp3")
         else:
             print("Marty is not connected")
 
@@ -57,5 +58,14 @@ class MartyFunction:
                 self.my_marty.walk(steps, 'auto', -15, turn_amount, step_time, None)
             else:
                 self.my_marty.walk(steps, 'auto', 15, turn_amount, step_time, None)
+        else:
+            print("Marty is not connected")
+
+#######
+
+    def play_music(self, mp3_file):
+        """Play an MP3 file."""
+        if self.my_marty:
+            self.my_marty.play_mp3(mp3_file)
         else:
             print("Marty is not connected")

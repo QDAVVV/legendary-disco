@@ -32,13 +32,13 @@ class WorkAreaFunction:
     def up_clicked(self):
         
         if self.is_connected and self.marty:
-            self.marty.walk(steps=2, direction='forward')
+            self.marty.walk(steps=8, direction='forward')
         else:
             print("Marty is not connected!")
 
     def down_clicked(self):
         if self.is_connected and self.marty:
-            self.marty.walk(steps=2, direction='backward')
+            self.marty.walk(steps=8, direction='back')
         else:
             print("Marty is not connected!")
 
