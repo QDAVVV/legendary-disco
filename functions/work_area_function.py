@@ -25,27 +25,44 @@ class WorkAreaFunction:
     def on_off_clicked(self):
         marty_ip = self.ip_manager.get_ip_address()
         self.marty = MartyFunction(marty_ip)
+        self.marty.connect()
         self.is_connected = True
         print(f"Connected to Marty at {marty_ip}")
 
     def up_clicked(self):
-        print("Le bouton 'Up' a été cliqué!")
-        if self.is_connected and self.marty_function:
-            self.marty_function.walk(steps=2, direction='forward')  # Faites avancer Marty de deux pas devant lui
+        
+        if self.is_connected and self.marty:
+            self.marty.walk(steps=2, direction='forward')
         else:
             print("Marty is not connected!")
 
     def down_clicked(self):
-        print("Le bouton 'Down' a été cliqué!")
+        if self.is_connected and self.marty:
+            self.marty.walk(steps=2, direction='backward')
+        else:
+            print("Marty is not connected!")
+
 
     def left_clicked(self):
-        print("Le bouton 'Left' a été cliqué!")
+        if self.is_connected and self.marty:
+            self.marty.sidestep(direction='left')
+        else:
+            print("Marty is not connected!")
 
     def right_clicked(self):
-        print("Le bouton 'Right' a été cliqué!")
+        if self.is_connected and self.marty:
+            self.marty.sidestep(direction='right')
+        else:
+            print("Marty is not connected!")
 
     def turn_left_clicked(self):
-        print("Le bouton 'Turn Left' a été cliqué!")
+        if self.is_connected and self.marty:
+            self.marty.turn(direction='left')
+        else:
+            print("Marty is not connected!")
 
     def turn_right_clicked(self):
-        print("Le bouton 'Turn Right' a été cliqué!")
+        if self.is_connected and self.marty:
+            self.marty.turn(direction='right')
+        else:
+            print("Marty is not connected!")
