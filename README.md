@@ -52,6 +52,10 @@ Le côté gauche de l'interface graphique permet de coder de façon très basiqu
 
 Après avoir choisi les blocs à effectuer, Marty réalisera les actions dans l'ordre en appuyant sur le bouton "Launch".
 
+## Contribution
+
+Pour contribuer à l'interface Scratch :
+- Créer Widget -> Créer Item -> Faire BlockManager -> GetWidget
 ## Licence
 Ce projet est sous licence MIT. Pour plus de détails, consultez le fichier [LICENSE](LICENSE).
 
