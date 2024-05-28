@@ -1,6 +1,10 @@
 from __future__ import print_function
 from martypy import Marty
 import inputs
+from labyrinthe import Labyrinth
+
+
+IP = "192.168.0.104"
 
 
 def game_controller():
@@ -14,6 +18,8 @@ def game_controller():
     my_marty = None
     is_connected = False
 
+    labyrinth = Labyrinth()
+
     while True:
         events = inputs.get_gamepad()
         for event in events:
@@ -21,17 +27,18 @@ def game_controller():
                 if not is_connected:
                     print("Trying to connect...")
                     try:
-                        my_marty = Marty("wifi", "192.168.0.101")
+                        my_marty = Marty("wifi", IP)
                         is_connected = True
                         print("Connection established !")
                         my_marty.stand_straight(1000, None)
-                    except Exception:
+                    except Exception as e:
                         print("Couldn't connect to Marty.")
                 else:
                     print("Already connected !")
 
             if event.code == "BTN_THUMBL" and event.state == 1:
                 print("BTN_THUMBL pressed.")
+                labyrinth.auto_walk(my_marty, 'left')
 
             if event.code == "BTN_SOUTH" and event.state == 1: # Bouton B(bouton du bas) = dance
                 print("B button pressed.")
@@ -40,9 +47,14 @@ def game_controller():
 
             if event.code == "BTN_EAST" and event.state == 1: #Bouton A(bouton de droite) = read color
                 print("Reading color...")
+                # Red = 113
+                # Blue = 42
+                # Green = 39
+                # Yellow = 126
+                # Purple = 35
                 if my_marty:
                     try:
-                        print(my_marty.get_obstacle_sensor_reading('left'))
+                        print(my_marty.get_ground_sensor_reading('left'))
                     except Exception as e:
                         print(e)
                 else:
@@ -55,7 +67,8 @@ def game_controller():
 
             if event.code == "BTN_WEST" and event.state == 1:
                 print("Y button released.")
-                # my_marty.eyes('normal', 1000, None)
+                my_marty.eyes('angry', 1000, None)
+                my_marty.eyes('normal', 1000, None)
 
             if event.code == "ABS_HAT0Y" and event.state == -1: # Pad directionnel
                 print("Going forwards.")
