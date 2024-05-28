@@ -1,7 +1,7 @@
 from __future__ import print_function
 from martypy import Marty
 import inputs
-
+import capteurs
 
 def game_controller():
     try:
@@ -15,7 +15,11 @@ def game_controller():
     is_connected = False
 
     while True:
+
         events = inputs.get_gamepad()
+        capteurs.hello()
+        print("event.code")
+
         for event in events:
             if event.code == "BTN_THUMBR" and event.state == 1: # Appuyer sur joystick droit pour se connecter.
                 if not is_connected:
@@ -53,8 +57,9 @@ def game_controller():
                 if my_marty:
                     my_marty.stand_straight(1000, None)
 
-            if event.code == "BTN_WEST" and event.state == 1:
-                print("Y button released.")
+            if event.code == "BTN_WEST" and event.state == 1: # Bouton Y(bouton du gauche)
+                print("Y button pressed.")
+                capteurs.printcapteurs(my_marty)
                 # my_marty.eyes('normal', 1000, None)
 
             if event.code == "ABS_HAT0Y" and event.state == -1: # Pad directionnel
