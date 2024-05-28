@@ -58,6 +58,3 @@ Pour contribuer à l'interface Scratch :
 - Créer Widget -> Créer Item -> Faire BlockManager -> GetWidget
 ## Licence
 Ce projet est sous licence MIT. Pour plus de détails, consultez le fichier [LICENSE](LICENSE).
-
-## Remerciements
-Nous tenons à remercier tous les contributeurs et la communauté des utilisateurs de Marty pour leur soutien et leurs suggestions précieuses.
