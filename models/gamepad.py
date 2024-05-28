@@ -31,6 +31,7 @@ class GameController:
             try:
                 self.marty_functions = MartyFunction(self.marty_ip)
                 self.is_connected = True
+                self.marty_functions.connect()
                 print("Connection established!")
             except Exception as e:
                 print(f"Couldn't connect to Marty: {e}")
