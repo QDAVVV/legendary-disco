@@ -1,5 +1,6 @@
 
 from martypy import Marty
+from models.labyrinthe import Labyrinth
 
 class MartyFunction:
     def __init__(self, marty_ip):
@@ -61,6 +62,13 @@ class MartyFunction:
         else:
             print("Marty is not connected")
 
+    def auto_walk(self):
+        """Make Marty walk automatically."""
+        if self.my_marty:
+            labyrinth = Labyrinth()
+            labyrinth.auto_walk(self.my_marty, "left")
+        else:
+            print("Marty is not connected")
 #######
 
     def play_music(self, mp3_file):

@@ -20,13 +20,13 @@ class MainWindow(QMainWindow):
         self.blocklist_function = BlocklistFunction(self.work_area)
         self.block_list = BlockList(self.blocklist_function, parent=self.work_area)
 
-        block_names = ["Connection", "For", "While", "If", "Else", "Elif", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Wait"]
+        block_names = ["Connection", "For", "While", "If", "Else", "Elif", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Wait","Auto"]
 
         for name in block_names:
             item = QListWidgetItem(name)
             self.block_list.addItem(item)
 
-        button_names = ["On/Off", "Up", "Down", "Left", "Right", "Turn Left", "Turn Right"]
+        button_names = ["On/Off", "Up", "Down", "Left", "Right", "Turn Left", "Turn Right","Auto"]
         button_layout = QVBoxLayout()
 
         for name in button_names:
@@ -46,6 +46,8 @@ class MainWindow(QMainWindow):
                 button.clicked.connect(self.work_area_function.turn_left_clicked)
             elif name == "Turn Right":
                 button.clicked.connect(self.work_area_function.turn_right_clicked)
+            elif name == "Auto":
+                button.clicked.connect(self.work_area_function.auto_clicked)
 
         main_layout = QGridLayout()
         main_layout.addWidget(self.block_list, 0, 0)

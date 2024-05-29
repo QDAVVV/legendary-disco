@@ -66,3 +66,9 @@ class WorkAreaFunction:
             self.marty.turn(direction='right')
         else:
             print("Marty is not connected!")
+    
+    def auto_clicked(self):
+        if self.is_connected and self.marty:
+            self.marty.auto_walk()
+        else:
+            print("Marty is not connected!")

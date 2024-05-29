@@ -41,6 +41,7 @@ class GameController:
             self.connect_to_marty()
 
         if event.code == "BTN_THUMBL" and event.state == 1:
+            self.marty_functions.auto_walk()
             print("BTN_THUMBL pressed.")
 
         if event.code == "BTN_SOUTH" and event.state == 1:  # Dance
