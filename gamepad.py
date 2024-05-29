@@ -113,6 +113,19 @@ def game_controller():
                 print("Done turning.")
                 turning = False
 
+#TROUVER LE CODE POUR LE BOUTON MOINS !!!
+            if event.code == "BTN_MINUS" and event.state == 1:
+                if is_connected:
+                    print("Trying to disconnect...")
+                    try:
+                        my_marty = None
+                        is_connected = False
+                        print("Disconnected")
+                    except Exception:
+                        print("An Error occured")
+                else:
+                    print("Cant disconnect if not connected")
+
 
 if __name__ == "__main__":
     game_controller()
