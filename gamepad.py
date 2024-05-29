@@ -21,7 +21,7 @@ def game_controller():
                 if not is_connected:
                     print("Trying to connect...")
                     try:
-                        my_marty = Marty("wifi", "192.168.0.101")
+                        my_marty = Marty("wifi", "192.168.0.3")
                         is_connected = True
                         print("Connection established !")
                         my_marty.stand_straight(1000, None)
@@ -32,6 +32,16 @@ def game_controller():
 
             if event.code == "BTN_THUMBL" and event.state == 1:
                 print("BTN_THUMBL pressed.")
+                if is_connected:
+                    print("Trying to disconnect...")
+                    try:
+                        my_marty = None
+                        is_connected = False
+                        print("Disconnected")
+                    except Exception:
+                        print("An Error occured")
+                else:
+                    print("Couldn't disconnect")
 
             if event.code == "BTN_SOUTH" and event.state == 1: # Bouton B(bouton du bas) = dance
                 print("B button pressed.")
