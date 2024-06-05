@@ -35,6 +35,8 @@ class MartyFunction:
         except Exception as e:
             print(f"Error reading color: {e}")
             return None
+        
+    
 
     def walk(self, steps=2, direction='auto', turn=0, step_length=35, step_time=1500):
         """Make Marty walk."""

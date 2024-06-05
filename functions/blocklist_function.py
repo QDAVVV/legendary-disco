@@ -13,7 +13,7 @@ from models.ip_manager import IPManager
 class BlocklistFunction:
     def __init__(self, work_area):
         self.work_area = work_area
-        self.marty_ip = IPManager.get_instance().get_ip_address()
+        self.marty_ip = IPManager.get_instance().get_ip_address1()
 
     def execute_program(self):
         work_area = self.work_area
