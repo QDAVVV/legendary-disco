@@ -20,45 +20,46 @@ class Labyrinth:
     def read(self, foot):
         self.reading = self.my_marty.get_ground_sensor_reading(str(foot))
 
+    def join_directions(self, other_martys_directions):
+        for i in range(len(other_martys_directions)):
+            self.directions.append(other_martys_directions[i])
+
     def recon(self):
         directions = []
-        laps = 0
 
-        while laps != 2:
-            for _ in range(3):
-                self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
-                self.read("left")
-                directions.append(self.reading)
-
-            self.my_marty.sidestep('right', 10, 35, 1000, None)
+        for _ in range(3):
+            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
             self.read("left")
             directions.append(self.reading)
 
-            for _ in range(2):
-                self.my_marty.walk(5, 'auto', 0, -35, 1500, None)
-                self.read("left")
-                directions.append(self.reading)
+        self.my_marty.sidestep('right', 10, 35, 1000, None)
+        self.read("left")
+        directions.append(self.reading)
 
-            self.my_marty.sidestep('right', 10, 35, 1000, None)
+        for _ in range(2):
+            self.my_marty.walk(5, 'auto', 0, -35, 1500, None)
             self.read("left")
             directions.append(self.reading)
 
-            for _ in range(2):
-                self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
-                self.read("left")
-                directions.append(self.reading)
+        self.my_marty.sidestep('right', 10, 35, 1000, None)
+        self.read("left")
+        directions.append(self.reading)
 
-            for i in range(5):
-                print("Second recon beginning in " + str(5 - i) + ".")
-                time.sleep(1)
+        for _ in range(2):
+            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
+            self.read("left")
+            directions.append(self.reading)
 
-            laps += 1
+        for i in range(5):
+            print("Second recon beginning in " + str(5 - i) + ".")
+            time.sleep(1)
+
 
         print("Recon over.")
 
         filtered_directions = [direction for direction in directions if
                                Blue - 1 <= direction <= Blue + 1
-                               or Red - 1 <= direction <= Red + 1 
+                               or Red - 1 <= direction <= Red + 1
                                or Green - 1 <= direction <= Green + 1]
 
         self.directions = filtered_directions
