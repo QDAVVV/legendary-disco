@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         self.blocklist_function = BlocklistFunction(self.work_area)
         self.block_list = BlockList(self.blocklist_function, parent=self.work_area)
 
-        block_names = ["Connection", "For", "While", "If", "Else", "Elif", "Walk", "Dance", "Rotate", "Side Step", "Scan", "Eye Move", "Stop", "Wait","Auto"]
+        block_names = ["Connection", "For",  "Walk", "Dance", "Rotate", "SideStep",  "Wait","Auto"]
 
         for name in block_names:
             item = QListWidgetItem(name)

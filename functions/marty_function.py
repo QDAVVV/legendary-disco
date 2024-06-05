@@ -1,4 +1,3 @@
-
 from martypy import Marty
 from models.labyrinthe import Labyrinth
 
@@ -40,6 +39,7 @@ class MartyFunction:
     def walk(self, steps=2, direction='auto', turn=0, step_length=35, step_time=1500):
         """Make Marty walk."""
         if self.my_marty:
+            print("Marty is walking")
             self.my_marty.walk(steps, direction, turn, step_length, step_time, None)
             self.play_music("sounds/edm.mp3")
         else:
@@ -69,11 +69,21 @@ class MartyFunction:
             labyrinth.auto_walk(self.my_marty, "left")
         else:
             print("Marty is not connected")
-#######
 
     def play_music(self, mp3_file):
         """Play an MP3 file."""
         if self.my_marty:
-            self.my_marty.play_mp3(mp3_file)
+            try:
+                print(f"Playing music: {mp3_file}")
+                self.my_marty.play_mp3(mp3_file)
+            except Exception as e:
+                print(f"Error playing music: {e}")
+        else:
+            print("Marty is not connected")
+
+    def wait(self, seconds=2):
+        """Make Marty wait."""
+        if self.my_marty:
+            self.my_marty.wait(seconds)
         else:
             print("Marty is not connected")
