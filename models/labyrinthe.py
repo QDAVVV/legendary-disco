@@ -18,17 +18,18 @@ class Labyrinth:
         self.Blue = 0  # est
         self.Rose = 0  # ouest
 
-    def read(self, foot):
-        if self.my_marty:
-            self.reading = self.my_marty.get_ground_sensor_reading(str(foot))
+    #Ajouter marty en paramètre dans read
+    def read(self, marty, foot, samples):
+        if marty is not None:
+            readings = [marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
+            self.reading = sum(readings) / len(readings)
         else:
-            print("Marty is not connected!")
-        
+            print("Marty is not connected.")
 
     def calibrate_color(self, color_name):
         print(f"Please place Marty on {color_name} card.")
         time.sleep(3)
-        self.read("left")
+        self.read(marty,"left", 20)
         setattr(self, color_name, self.reading)
         print(f"{color_name}: {self.reading}")
 
@@ -41,52 +42,39 @@ class Labyrinth:
     def join_directions(self, other_martys_directions):
         self.directions.extend(other_martys_directions)
 
-    def get_measure(self, direction, marty_instance):
-        marty_instance.stand_straight(1000, None)
-        
-        self.read("left", 20)
-        direction.append(self.reading)
-
-    def recon(self,marty_instance):
+    #Ajouter marty en paramètre dans recon
+    def recon(self, marty):
         directions = []
-    
-        marty_instance.stand_straight(1000, None)
-        print("Recon started.")
-        self.get_measure(directions, marty_instance)  # Passer l'instance de Marty à get_measure
-        print("Function 1 done.")
-        print(directions)
-        
 
-        for _ in range(2):
-            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
-            self.read("left", 20)
-            directions.append(self.reading)
-            print(directions)
-
-        self.my_marty.stand_straight(1000, None)
-        self.my_marty.sidestep('right', 5, 35, 1000, None)
-        self.read("left", 20)
+        marty.stand_straight(1000, None)
+        self.read(marty, "left", 20)
         directions.append(self.reading)
-        print(directions)
 
         for _ in range(2):
-            self.my_marty.walk(5, 'auto', 0, -35, 1500, None)
-            self.read("left", 20)
+            marty.walk(5, 'auto', 0, 35, 1500, None)
+            self.read(marty, "left", 20)
             directions.append(self.reading)
-            print(directions)
 
-        self.my_marty.stand_straight(1000, None)
-        self.my_marty.sidestep('right', 5, 35, 1000, None)
-        self.read("left", 20)
+        marty.stand_straight(1000, None)
+        marty.sidestep('right', 5, 35, 1000, None)
+        self.read(marty, "left", 20)
         directions.append(self.reading)
-        print(directions)
 
         for _ in range(2):
-            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
-            self.read("left", 20)
+            marty.walk(5, 'auto', 0, -35, 1500, None)
+            self.read(marty, "left", 20)
             directions.append(self.reading)
-            print(directions)
-            
+
+        marty.stand_straight(1000, None)
+        marty.sidestep('right', 5, 35, 1000, None)
+        self.read(marty, "left", 20)
+        directions.append(self.reading)
+
+        for _ in range(2):
+            marty.walk(5, 'auto', 0, 35, 1500, None)
+            self.read(marty, "left", 20)
+            directions.append(self.reading)
+            marty.stand_straight(1000, None)
 
         print("Recon over.")
         print(directions)
@@ -99,8 +87,6 @@ class Labyrinth:
 
         self.directions = filtered_directions
         print(self.directions)
-
-    
 
     def auto_walk(self, marty, foot_with_ground_sensor):
         self.my_marty = marty

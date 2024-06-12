@@ -5,11 +5,14 @@ class MartyFunction:
     def __init__(self, marty_ip):
         self.marty_ip = marty_ip
         self.my_marty = None
+        self.labyrinth = Labyrinth()
 
     def connect(self):
         """Connect to Marty"""
         self.my_marty = Marty("wifi", self.marty_ip)
         self.my_marty.stand_straight(1000, None)
+        #Laaaaaaaaaaaaaaaaaaaaaaaaa
+        self.labyrinth.my_marty = self.my_marty
 
     def dance(self):
         """Make Marty dance."""
@@ -89,3 +92,37 @@ class MartyFunction:
             self.my_marty.wait(seconds)
         else:
             print("Marty is not connected")
+
+    def get_ground_sensor_reading(self, foot='left'):
+        """Get the ground sensor reading."""
+        if self.my_marty:
+            return self.my_marty.get_ground_sensor_reading(foot)
+        else:
+            print("Marty is not connected")
+            return None
+        
+    def calibrate(self):
+        """Calibrate the labyrinth."""
+        if self.my_marty:
+            
+            self.labyrinth.calibrate() 
+        else:
+            print("Marty is not connected")
+
+    def recon_labyrinth(self):
+        """Recon the labyrinth."""
+        if self.my_marty:
+            self.my_marty.stand_straight(1000, None)  
+            directions1 = self.labyrinth.recon(self.my_marty)  # Passer self.my_marty comme paramètre
+            print("Directions from Marty 1:", directions1)
+
+            print("Reconning labyrinth for Marty 2...")
+            self.marty_functions2.recon_labyrinth()  # Lancer la reconnaissance pour le deuxième Marty
+            directions2 = self.marty_functions2.labyrinth.directions  # Récupération des directions du deuxième Marty
+            print("Directions from Marty 2:", directions2)
+            merged_directions = self.merge_directions(directions1, directions2)  # Fusion des directions
+            print("Merged directions:", merged_directions)
+        else:
+            print("Marty is not connected")
+
+    
