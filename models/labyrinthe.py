@@ -19,9 +19,9 @@ class Labyrinth:
         self.Rose = 0  # ouest
 
     #Ajouter marty en paramètre dans read
-    def read(self, marty, foot, samples):
-        if marty is not None:
-            readings = [marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
+    def read(self, foot, samples):
+        if self.my_marty is not None:
+            readings = [self.my_marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
             self.reading = sum(readings) / len(readings)
         else:
             print("Marty is not connected.")
@@ -29,7 +29,7 @@ class Labyrinth:
     def calibrate_color(self, color_name):
         print(f"Please place Marty on {color_name} card.")
         time.sleep(3)
-        self.read(marty,"left", 20)
+        self.read("left", 20)
         setattr(self, color_name, self.reading)
         print(f"{color_name}: {self.reading}")
 
@@ -43,38 +43,38 @@ class Labyrinth:
         self.directions.extend(other_martys_directions)
 
     #Ajouter marty en paramètre dans recon
-    def recon(self, marty):
+    def recon(self):
         directions = []
 
-        marty.stand_straight(1000, None)
-        self.read(marty, "left", 20)
+        self.my_marty.stand_straight(1000, None)
+        self.read("left", 20)
         directions.append(self.reading)
 
         for _ in range(2):
-            marty.walk(5, 'auto', 0, 35, 1500, None)
-            self.read(marty, "left", 20)
+            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
+            self.read("left", 20)
             directions.append(self.reading)
 
-        marty.stand_straight(1000, None)
-        marty.sidestep('right', 5, 35, 1000, None)
-        self.read(marty, "left", 20)
+        self.my_marty.stand_straight(1000, None)
+        self.my_marty.sidestep('right', 5, 35, 1000, None)
+        self.read("left", 20)
         directions.append(self.reading)
 
         for _ in range(2):
-            marty.walk(5, 'auto', 0, -35, 1500, None)
-            self.read(marty, "left", 20)
+            self.my_marty.walk(5, 'auto', 0, -35, 1500, None)
+            self.read("left", 20)
             directions.append(self.reading)
 
-        marty.stand_straight(1000, None)
-        marty.sidestep('right', 5, 35, 1000, None)
-        self.read(marty, "left", 20)
+        self.my_marty.stand_straight(1000, None)
+        self.my_marty.sidestep('right', 5, 35, 1000, None)
+        self.read("left", 20)
         directions.append(self.reading)
 
         for _ in range(2):
-            marty.walk(5, 'auto', 0, 35, 1500, None)
-            self.read(marty, "left", 20)
+            self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
+            self.read("left", 20)
             directions.append(self.reading)
-            marty.stand_straight(1000, None)
+            self.my_marty.stand_straight(1000, None)
 
         print("Recon over.")
         print(directions)
