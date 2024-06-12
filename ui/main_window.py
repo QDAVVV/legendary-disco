@@ -68,11 +68,14 @@ class MainWindow(QMainWindow):
             elif name =="Battery":
                 dashboardslabel = Label(name)
                 dashboard_layout.addWidget(dashboardslabel)
-                if self.work_area_function.is_connected:
-                    battery = self.work_area_function.marty.get_battery_remaining()
-                    indic = RectWidget(intToHexColor.convertInt(battery))
-                else:
-                    indic = RectWidget(intToHexColor.convertInt(0))
+
+                self.battery_indicator = QProgressBar(self)
+                layout.addWidget(self.battery_indicator)
+
+        # Créer un minuteur pour mettre à jour l'indicateur de batterie périodiquement
+                self.timer = QTimer(self)
+                self.timer.timeout.connect(self.update_battery_level)
+                self.timer.start(1000)
             else:
                 dashboardslabel = Label(name)
                 dashboard_layout.addWidget(dashboardslabel)
@@ -93,8 +96,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         self.setWindowIcon(QIcon('hehehe'))
 
-    
-
-    
-
-    
+    def update_battery_level(self):
+        # Simuler la récupération du niveau de batterie (remplacer par votre propre logique)
+        battery_level = random.randint(0, 100)
+        
+        # Mettre à jour l'indicateur de batterie (barre de progression)
+        self.battery_indicator.setValue(battery_level)
