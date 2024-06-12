@@ -23,14 +23,15 @@ class WorkAreaFunction:
         work_area.organize_blocks_for_execution()
 
     def on_off_clicked(self):
-        if(self.is_connected):
+        if(self.is_connected==False):
             marty_ip = self.ip_manager.get_ip_address()
             self.marty = MartyFunction(marty_ip)
             self.marty.connect()
             self.is_connected = True
             print(f"Connected to Marty at {marty_ip}")
-        elif(self.is_connected==False):
+        elif(self.is_connected):
             self.marty = None
+            self.is_connected = False
             print("Disconnected from Marty.")
         
 
