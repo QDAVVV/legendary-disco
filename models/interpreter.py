@@ -123,7 +123,7 @@ class WaitBlock:
 
 
  ####################################################################       
-
+""""
 blocks = [
     ForBlock("i",0,10,[WalkBlock(10),RotateBlock(90)]),
     
@@ -134,6 +134,7 @@ blocks = [
     EyeMoveBlock("left"),
     
 ]
+
 code = ""
 for block in blocks:
     code += block.to_python_code()
@@ -145,6 +146,6 @@ except Exception as e:
     print(f"Error: {e}")
 
 print(code)
-
+"""
 ####################################################################
 

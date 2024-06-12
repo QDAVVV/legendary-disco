@@ -21,6 +21,7 @@ class Labyrinth:
     def read(self, foot, samples):
         readings = [self.my_marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
         self.reading = sum(readings) / len(readings)
+        
 
     def calibrate_color(self, color_name):
         print(f"Please place Marty on {color_name} card.")
@@ -38,38 +39,52 @@ class Labyrinth:
     def join_directions(self, other_martys_directions):
         self.directions.extend(other_martys_directions)
 
-    def recon(self):
-        directions = []
-
-        self.my_marty.stand_straight(1000, None)
+    def get_measure(self, direction, marty_instance):
+        marty_instance.stand_straight(1000, None)
+        marty_instance.wait(2)
         self.read("left", 20)
-        directions.append(self.reading)
+        direction.append(self.reading)
+
+    def recon(self,marty_instance):
+        directions = []
+    
+        marty_instance.stand_straight(1000, None)
+        print("Recon started.")
+        self.get_measure(directions, marty_instance)  # Passer l'instance de Marty à get_measure
+        print("Function 1 done.")
+        print(directions)
+        
 
         for _ in range(2):
             self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
             self.read("left", 20)
             directions.append(self.reading)
+            print(directions)
 
         self.my_marty.stand_straight(1000, None)
         self.my_marty.sidestep('right', 5, 35, 1000, None)
         self.read("left", 20)
         directions.append(self.reading)
+        print(directions)
 
         for _ in range(2):
             self.my_marty.walk(5, 'auto', 0, -35, 1500, None)
             self.read("left", 20)
             directions.append(self.reading)
+            print(directions)
 
         self.my_marty.stand_straight(1000, None)
         self.my_marty.sidestep('right', 5, 35, 1000, None)
         self.read("left", 20)
         directions.append(self.reading)
+        print(directions)
 
         for _ in range(2):
             self.my_marty.walk(5, 'auto', 0, 35, 1500, None)
             self.read("left", 20)
             directions.append(self.reading)
-            self.my_marty.stand_straight(1000, None)
+            print(directions)
+            
 
         print("Recon over.")
         print(directions)
@@ -82,6 +97,8 @@ class Labyrinth:
 
         self.directions = filtered_directions
         print(self.directions)
+
+    
 
     def auto_walk(self, marty, foot_with_ground_sensor):
         self.my_marty = marty

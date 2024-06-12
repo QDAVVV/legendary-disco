@@ -6,7 +6,9 @@ from models.ip_manager import IPManager
 
 def start_game_controller():
     marty_ip = IPManager.get_instance().get_ip_address1()
-    game_controller = GameController(marty_ip)
+    marty_ip2 = IPManager.get_instance().get_ip_address2()
+    
+    game_controller = GameController(marty_ip,marty_ip2)
     game_controller.run()
 
 if __name__ == "__main__":
@@ -16,8 +18,8 @@ if __name__ == "__main__":
         app.setStyleSheet(f.read())
 
     # Définir les adresses IP dans IPManager
-    IPManager.get_instance().add_ip_address("192.168.0.101") # Addresse IP du Marty 1
-    IPManager.get_instance().add_ip_address("192.168.0.100") # Addresse IP du Marty 2
+    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 1
+    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 2
 
     window = MainWindow()
     window.show()
