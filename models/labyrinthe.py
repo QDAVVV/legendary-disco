@@ -18,15 +18,17 @@ class Labyrinth:
         self.Blue = 0  # est
         self.Rose = 0  # ouest
 
-    def read(self, foot, samples):
-        readings = [self.my_marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
-        self.reading = sum(readings) / len(readings)
+    def read(self, foot):
+        if self.my_marty:
+            self.reading = self.my_marty.get_ground_sensor_reading(str(foot))
+        else:
+            print("Marty is not connected!")
         
 
     def calibrate_color(self, color_name):
         print(f"Please place Marty on {color_name} card.")
         time.sleep(3)
-        self.read("left", 20, 50)
+        self.read("left")
         setattr(self, color_name, self.reading)
         print(f"{color_name}: {self.reading}")
 
@@ -41,7 +43,7 @@ class Labyrinth:
 
     def get_measure(self, direction, marty_instance):
         marty_instance.stand_straight(1000, None)
-        marty_instance.wait(2)
+        
         self.read("left", 20)
         direction.append(self.reading)
 
