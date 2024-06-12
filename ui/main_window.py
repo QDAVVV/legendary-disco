@@ -8,6 +8,11 @@ from blocks.for_block_item import ForBlockItem
 from functions.blocklist_function import BlocklistFunction
 from functions.work_area_function import WorkAreaFunction
 
+from ui.uitools.indic import RectWidget
+from ui.uitools.label import Label
+from ui.uitools.batteryToHexColor import intToHexColor
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -47,10 +52,41 @@ class MainWindow(QMainWindow):
             elif name == "Turn Right":
                 button.clicked.connect(self.work_area_function.turn_right_clicked)
 
+        dashboard_names = ["Connection","Battery"]
+        dashboard_layout = QVBoxLayout()
+
+        for name in dashboard_names :
+            if name == "Connection":
+                if self.work_area_function.is_connected:
+                    dashboardslabel = Label(name)
+                    dashboard_layout.addWidget(dashboardslabel)
+                    indic = RectWidget("#00FF00")
+                else:
+                    dashboardslabel = Label(name)
+                    dashboard_layout.addWidget(dashboardslabel)
+                    indic = RectWidget("#FF0000")
+            elif name =="Battery":
+                dashboardslabel = Label(name)
+                dashboard_layout.addWidget(dashboardslabel)
+                if self.work_area_function.is_connected:
+                    battery = self.work_area_function.marty.get_battery_remaining()
+                    indic = RectWidget(intToHexColor.convertInt(battery))
+                else:
+                    indic = RectWidget(intToHexColor.convertInt(0))
+            else:
+                dashboardslabel = Label(name)
+                dashboard_layout.addWidget(dashboardslabel)
+                indic = RectWidget("#000000")
+
+            dashboard_layout.addWidget(indic)
+
+        inter_layout= QGridLayout()
+
         main_layout = QGridLayout()
         main_layout.addWidget(self.block_list, 0, 0)
         main_layout.addWidget(self.work_area, 0, 1)
         main_layout.addLayout(button_layout, 0, 2)
+        main_layout.addLayout(dashboard_layout, 0 , 4)
 
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
