@@ -26,9 +26,13 @@ class WorkAreaFunction:
         if(self.is_connected==False):
             marty_ip = self.ip_manager.get_ip_address()
             self.marty = MartyFunction(marty_ip)
-            self.marty.connect()
-            self.is_connected = True
-            print(f"Connected to Marty at {marty_ip}")
+            try:
+                self.marty.connect()
+            except:
+                print("Couldn't connect to Marty")
+            else:
+                self.is_connected = True
+                print(f"Connected to Marty at {marty_ip}")
         elif(self.is_connected):
             self.marty = None
             self.is_connected = False
