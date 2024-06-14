@@ -1,9 +1,11 @@
-from PyQt6.QtWidgets import QMainWindow, QGridLayout, QVBoxLayout, QWidget, QPushButton, QListWidgetItem
+from PyQt6.QtWidgets import QMainWindow, QGridLayout, QVBoxLayout, QWidget, QPushButton, QListWidgetItem, QProgressBar
 from PyQt6.QtGui import QDrag, QCursor, QIcon,QPen
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt ,QTimer
 from ui.work_area import WorkArea
 from ui.block_list import BlockList
 from blocks.for_block_item import ForBlockItem
+
+import random
 
 from functions.blocklist_function import BlocklistFunction
 from functions.work_area_function import WorkAreaFunction
@@ -20,6 +22,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Get Jinxed !")
         self.setGeometry(100, 100, 800, 600)
         self.work_area = WorkArea(self)
+
+        self.timer = QTimer(self)
 
         self.work_area_function = WorkAreaFunction(self.work_area)
         self.blocklist_function = BlocklistFunction(self.work_area)
@@ -57,32 +61,37 @@ class MainWindow(QMainWindow):
 
         for name in dashboard_names :
             if name == "Connection":
+                dashboardslabel = Label(name)
+                dashboard_layout.addWidget(dashboardslabel)
                 if self.work_area_function.is_connected:
-                    dashboardslabel = Label(name)
-                    dashboard_layout.addWidget(dashboardslabel)
-                    indic = RectWidget("#00FF00")
+                    self.indic_connect = RectWidget("#00FF00")
+
                 else:
-                    dashboardslabel = Label(name)
-                    dashboard_layout.addWidget(dashboardslabel)
-                    indic = RectWidget("#FF0000")
+                    self.indic_connect = RectWidget("#FF0000")
+
+                dashboard_layout.addWidget(self.indic_connect)
+
+                self.timer.timeout.connect(self.update_connection_status)
+                self.timer.start(1000)
             elif name =="Battery":
                 dashboardslabel = Label(name)
                 dashboard_layout.addWidget(dashboardslabel)
 
                 self.battery_indicator = QProgressBar(self)
-                layout.addWidget(self.battery_indicator)
+                dashboard_layout.addWidget(self.battery_indicator)
 
         # Créer un minuteur pour mettre à jour l'indicateur de batterie périodiquement
-                self.timer = QTimer(self)
+                
                 self.timer.timeout.connect(self.update_battery_level)
                 self.timer.start(1000)
             else:
                 dashboardslabel = Label(name)
                 dashboard_layout.addWidget(dashboardslabel)
                 indic = RectWidget("#000000")
+                dashboard_layout.addWidget(indic)
 
-            dashboard_layout.addWidget(indic)
 
+            
         inter_layout= QGridLayout()
 
         main_layout = QGridLayout()
@@ -97,8 +106,19 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon('hehehe'))
 
     def update_battery_level(self):
-        # Simuler la récupération du niveau de batterie (remplacer par votre propre logique)
-        battery_level = random.randint(0, 100)
-        
+        try:
+            battery_level = self.work_area_function.marty.get_battery_remaining()
+        except:
+            battery_level = 0
         # Mettre à jour l'indicateur de batterie (barre de progression)
         self.battery_indicator.setValue(battery_level)
+
+    def update_connection_status(self):
+        try:
+            if(self.work_area_function.is_connected):
+                self.indic_connect.changeColour("#00FF00")
+            else:
+                self.indic_connect.changeColour("#FF0000")
+        except:
+            connection_status = False
+            self.indic_connect.changeColour("#FF0000")
