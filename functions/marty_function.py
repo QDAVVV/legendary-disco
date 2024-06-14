@@ -72,7 +72,7 @@ class MartyFunction:
         """Make Marty walk automatically."""
         if self.my_marty:
             labyrinth = Labyrinth()
-            labyrinth.auto_walk(self.my_marty, "left")
+            labyrinth.auto_walk()
         else:
             print("Marty is not connected")
 

@@ -21,8 +21,9 @@ class Labyrinth:
     #Ajouter marty en paramètre dans read
     def read(self, foot, samples):
         if self.my_marty is not None:
-            readings = [self.my_marty.get_ground_sensor_reading(str(foot)) for _ in range(samples)]
-            self.reading = sum(readings) / len(readings)
+            for _ in range(samples):
+                readings = self.my_marty.get_ground_sensor_reading(str(foot))
+                self.reading = sum(readings) / len(readings)
         else:
             print("Marty is not connected.")
 
@@ -88,14 +89,13 @@ class Labyrinth:
         self.directions = filtered_directions
         print(self.directions)
 
-    def auto_walk(self, marty, foot_with_ground_sensor):
-        self.my_marty = marty
+    def auto_walk(self):
         self.is_finished = False
         while not self.is_finished:
             try:
                 print(self.current_direction)
                 print(self.reading)
-                self.read(str(foot_with_ground_sensor), 20)
+                self.read("left", 20)
                 if self.Red - 5 <= self.reading <= self.Red + 5:
                     self.my_marty.celebrate()
                     self.is_finished = True
