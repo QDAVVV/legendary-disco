@@ -8,21 +8,6 @@ import martypy
 
 
 
-
-
-
-
-
-def handling_input(inp):
-    print('Got {}'.format(inp))
-    
-
-
-                
-        
-
-
-
 class Application:
     Colors = []
     RegisteredIP = []
@@ -67,7 +52,7 @@ class Application:
                 self.LastIP = input('Choisissez l\'addresse IP que vous souhaitez utiliser:\n')
                 
                 try:
-                    self.my_marty = martypy.Marty("wifi", "192.168.0.5")
+                    self.my_marty = martypy.Marty("wifi", self.LastIP)
                 except Exception:
                     print("Une erreur s'est produit lors de la connexion, retour vers l'ecran precedent !")
                     self.Board_WifiOptions()
@@ -88,20 +73,8 @@ class Application:
                 
 
     def Marty_Menu(self):
-        print('Welcome To your Personal Marty, to move use the following letters\n\t\t\t  z\n\t\t\tq s d\nTo turn Left, press a\nTo turn right,press e\nTo ask a color read, press r\nTo enter Color Configuration Mode, press: o')
-        #t = threading.Thread(target=self.MoveMarty)
-        #t.daemon = True
-        #t.start()
+        print('Welcome To your Personal Marty, to move use the following letters\n\t\t\t  z\n\t\t\tq s d\nTo turn Left, press a\nTo turn right,press e\nTo ask a color read, press r\nTo enter Color Configuration Mode, press: o\nTo quit the program press "*"')
 
-        #self.my_marty.walk()
-#        while True:
-#            if self.Marty_Controlled == True:
-#                if (self.my_marty.foot_on_ground('left') and self.my_marty.foot_on_ground('right') ):
-#                    self.ColorRead()
-#                else:
-#                    time.sleep(5)
-#            else:
-#                time.sleep(5)
         self.MoveMarty()
 
 
@@ -110,7 +83,7 @@ class Application:
         self.Marty_Controlled = True
         while True:
             #time.sleep(a)
-            print('waiting for something to happen')
+            print('Marty attend vos instructions !')
             try:
                 input = bytes.decode(msvcrt.getch(), encoding="utf-8")
                 
@@ -161,6 +134,7 @@ class Application:
                 self.NewColor()
             case '0':
                 self.ColorRead()
+                self.Board_ColorConfig()
             case '4':
                 self.MoveMarty()
             case _:
@@ -202,8 +176,8 @@ class Application:
     def ColorRead(self):
         Detect = self.my_marty.foot_on_ground('left')
         if Detect == True:
-            print("Pied au sol ?: ",Detect,"\nvalue detected: ",self.my_marty.get_ground_sensor_reading('left'),"\nCouleur Detetcte: ", self.my_marty.get_color_sensor_color('left'),"\nCouleur en Hexa: ",self.my_marty.get_color_sensor_hex('left'),"\nCouleur en channel: ",self.my_marty.get_color_sensor_value_by_channel('left','clear'))
+            print("Pied au sol ?: ",Detect,"\nvalue detected: ",self.my_marty.get_ground_sensor_reading('left'),"\nCouleur Detetcte: ", "\nCouleur en Hexa: ",self.my_marty.get_color_sensor_hex('left'),"\nCouleur en channel: ",self.my_marty.get_color_sensor_value_by_channel('left','clear'))
 #print('Probleme avec un capteur: ', martypy.Exceptions.MartyCommandException)
             time.sleep(3)
-            self.Board_ColorConfig()
+            
                     
