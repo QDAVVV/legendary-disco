@@ -13,6 +13,9 @@ class RectWidget(QWidget):
     def initUI(self):
         self.setMinimumSize(70, 70)
 
+    def changeColour(self,colour):
+        self.color = colour
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
