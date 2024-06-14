@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
 
     def update_battery_level(self):
         try:
-            battery_level = self.work_area_function.marty.get_battery_remaining()
+            battery_level = self.work_area_function.marty.get_battery()
         except:
             battery_level = 0
         # Mettre à jour l'indicateur de batterie (barre de progression)

@@ -69,3 +69,6 @@ class MartyFunction:
             self.my_marty.play_mp3(mp3_file)
         else:
             print("Marty is not connected")
+
+    def get_battery(self):
+        return self.my_marty.get_battery_remaining()
