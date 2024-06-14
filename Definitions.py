@@ -64,9 +64,10 @@ class Application:
                     self.Marty_Menu()
 
             case'2':
+                
                 print("Voici toute les addresses utilisés: ")
                 for i in self.RegisteredIP:
-                    print(i,": ",self.RegisteredIP[i])
+                    print(i)
                 self.Board_WifiOptions()
             case _:
                 self.Board_AvailableConnexionMethod()
@@ -113,9 +114,16 @@ class Application:
                     
                 case 'r':
                     self.ColorRead()
+
+                case 'x':
+                    self.my_marty.close()
+                    print("\nDéconnexion de Marty !")
+                    self.Board_AvailableConnexionMethod()
+                    break
                     
                 case '*':
                     self.Marty_Controlled = False
+                    self.my_marty.close()
                     self.Exit = True
                     sys.exit()
     
@@ -148,12 +156,12 @@ class Application:
     def TournerDroite(self):
             #1er pas
         self.my_marty.stand_straight()
-        self.my_marty.lean('right',15,750,True)
+        self.my_marty.lean('right',30,750,True)
         self.my_marty.lift_foot('left')
         self.my_marty.move_joint(1,10,500,True)
         self.my_marty.lower_foot('left')
             #2eme pas
-        self.my_marty.lean('left',30,750,True)
+        self.my_marty.lean('left',60,750,True)
         self.my_marty.lift_foot('right')
         self.my_marty.move_joint(4,10,500,True)
         self.my_marty.lower_foot('right')
@@ -162,12 +170,12 @@ class Application:
     def TournerGauche(self):
         #1er pas
         self.my_marty.stand_straight()
-        self.my_marty.lean('left',15,750,True)
+        self.my_marty.lean('left',30,750,True)
         self.my_marty.lift_foot('right')
         self.my_marty.move_joint(1,-10,500,True)
         self.my_marty.lower_foot('right')
             #2eme pas
-        self.my_marty.lean('right',30,750,True)
+        self.my_marty.lean('right',60,750,True)
         self.my_marty.lift_foot('left')
         self.my_marty.move_joint(4,-10,500,True)
         self.my_marty.lower_foot('left')
@@ -180,4 +188,4 @@ class Application:
 #print('Probleme avec un capteur: ', martypy.Exceptions.MartyCommandException)
             time.sleep(3)
             
-                    
+            
