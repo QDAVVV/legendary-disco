@@ -4,7 +4,9 @@ class WorkAreaFunction:
     def __init__(self, work_area):
         self.work_area = work_area
         self.marty = None
+        self.marty2 = None
         self.is_connected = False
+        self.is_connected2 = False
         self.ip_manager = IPManager.get_instance()
 
     def set_marty_ip(self, marty_ip):
@@ -24,20 +26,35 @@ class WorkAreaFunction:
 
     def on_off_clicked(self):
         if(self.is_connected==False):
-            marty_ip = self.ip_manager.get_ip_address()
+            marty_ip = self.ip_manager.get_ip_address1()
+            print('ip:', marty_ip)  
             self.marty = MartyFunction(marty_ip)
             try:
                 self.marty.connect()
             except:
                 print("Couldn't connect to Marty")
-            else:
-                self.is_connected = True
-                print(f"Connected to Marty at {marty_ip}")
-        elif(self.is_connected):
-            self.marty = None
-            self.is_connected = False
-            print("Disconnected from Marty.")
+
+
+            self.is_connected = True
+
+            marty_ip2 = self.ip_manager.get_ip_address2()
+            print('ip2:', marty_ip2) 
+            self.marty2 = MartyFunction(marty_ip2)
+            try:
+                self.marty2.connect()
+            except:
+                print("Couldn't connect to Marty2")
+
+            self.is_connected2 = True
+            print(f"Connected to Marty at {marty_ip}")
+            print(f"Connected to Marty at {marty_ip2}")
         
+        elif(self.is_connected):
+            self.marty  = None
+            self.marty2 = None
+            self.is_connected  = False
+            self.is_connected2 = False
+            print("Disconnected from Marty.")
 
     def up_clicked(self):
         
@@ -74,5 +91,11 @@ class WorkAreaFunction:
     def turn_right_clicked(self):
         if self.is_connected and self.marty:
             self.marty.turn(direction='right')
+        else:
+            print("Marty is not connected!")
+    
+    def auto_clicked(self):
+        if self.is_connected and self.marty:
+            self.marty.auto_walk()
         else:
             print("Marty is not connected!")
