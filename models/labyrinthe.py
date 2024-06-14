@@ -19,13 +19,25 @@ class Labyrinth:
         self.Rose = 0  # ouest
 
     #Ajouter marty en paramètre dans read
-    def read(self, foot, samples):
-        if self.my_marty is not None:
+def read(self, foot, samples):
+    if self.my_marty is not None:
+        try:
+            total_readings = []
             for _ in range(samples):
-                readings = self.my_marty.get_ground_sensor_reading(str(foot))
-                self.reading = sum(readings) / len(readings)
-        else:
-            print("Marty is not connected.")
+                reading = self.my_marty.get_ground_sensor_reading(foot)
+                if isinstance(reading, int): 
+                    total_readings.append(reading)
+                else:
+                    print(f"Invalid reading type for sample {_}: {reading}")
+            if total_readings:
+                self.reading = sum(total_readings) / len(total_readings)
+            else:
+                print("No valid readings received.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            print("Colour sensor might not be working.")
+    else:
+        print("Marty is not connected.")
 
     def calibrate_color(self, color_name):
         print(f"Please place Marty on {color_name} card.")
