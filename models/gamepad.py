@@ -19,6 +19,11 @@ class GameController:
 
         self.labyrinth = Labyrinth()
 
+    def both_walk(self):
+        self.marty_functions.walk()
+        self.marty_functions2.walk()
+
+
 
     def run(self):
         try:
@@ -39,7 +44,7 @@ class GameController:
             print("Trying to connect...")
             try:
                 self.marty_functions = MartyFunction(self.marty_ip)
-                self.marty_functions2 = MartyFunction(self.marty_ip2)
+                self.marty_functions2 = MartyFunction(self.marty_ip2,self.marty_functions)
                 
                 self.marty_functions.connect()
                 self.marty_functions2.connect()
@@ -60,7 +65,7 @@ class GameController:
         if event.code == "BTN_SOUTH" and event.state == 1:  # Dance
             print("B button pressed.")
             if self.is_connected:
-                self.marty_functions.dance()
+                self.both_walk()
 
         if event.code == "BTN_EAST" and event.state == 1:  # Calibrate
             print("Calibrating labyrinth...")

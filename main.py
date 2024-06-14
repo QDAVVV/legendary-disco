@@ -18,8 +18,8 @@ if __name__ == "__main__":
         app.setStyleSheet(f.read())
 
     # Définir les adresses IP dans IPManager
-    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 1
-    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 2
+    IPManager.get_instance().add_ip_address("192.168.0.8") # Addresse IP du Marty 1
+    IPManager.get_instance().add_ip_address("192.168.0.6") # Addresse IP du Marty 2
 
     window = MainWindow()
     window.show()

@@ -1,11 +1,12 @@
 from martypy import Marty
 from models.labyrinthe import Labyrinth
-
+import threading
 class MartyFunction:
-    def __init__(self, marty_ip):
+    def __init__(self, marty_ip,marty_functions2=None):
         self.marty_ip = marty_ip
         self.my_marty = None
         self.labyrinth = Labyrinth()
+        self.marty_functions2 = marty_functions2
 
     def connect(self):
         """Connect to Marty"""
@@ -46,7 +47,7 @@ class MartyFunction:
         if self.my_marty:
             print("Marty is walking")
             self.my_marty.walk(steps, direction, turn, step_length, step_time, None)
-            self.play_music("sounds/edm.mp3")
+            
         else:
             print("Marty is not connected")
 
@@ -110,19 +111,37 @@ class MartyFunction:
             print("Marty is not connected")
 
     def recon_labyrinth(self):
-        """Recon the labyrinth."""
-        if self.my_marty:
-            self.my_marty.stand_straight(1000, None)  
-            directions1 = self.labyrinth.recon()  # Passer self.my_marty comme paramètre
-            print("Directions from Marty 1:", directions1)
+        """Recon the labyrinth with two Martys in parallel."""
+        if self.my_marty :
+            # Create threads for reconning the labyrinth for each Marty
+            thread1 = threading.Thread(target=self._recon_labyrinth, args=(self.labyrinth,))
+            #thread2 = threading.Thread(target=self._recon_labyrinth, args=(self.marty_functions2.labyrinth,))
 
-            print("Reconning labyrinth for Marty 2...")
-            self.marty_functions2.recon_labyrinth()  # Lancer la reconnaissance pour le deuxième Marty
-            directions2 = self.marty_functions2.labyrinth.directions  # Récupération des directions du deuxième Marty
-            print("Directions from Marty 2:", directions2)
-            merged_directions = self.merge_directions(directions1, directions2)  # Fusion des directions
-            print("Merged directions:", merged_directions)
+            # Start the threads
+            thread1.start()
+            #thread2.start()
+
+            # Wait for both threads to finish
+            thread1.join()
+            #thread2.join()
+
+            # Collect directions from both Martys
+            directions1 = self.labyrinth.directions
+            #directions2 = self.marty_functions2.labyrinth.directions
+
+            print("Directions from Marty 1:", directions1)
+            #print("Directions from Marty 2:", directions2)
+
+            # Merge the directions
+            #merged_directions = self.merge_directions(directions1, directions2)
+            #"print("Merged directions:", merged_directions)
         else:
             print("Marty is not connected")
+
+    def _recon_labyrinth(self, labyrinth):
+        """Helper method to recon the labyrinth for a given Marty."""
+        labyrinth.my_marty.stand_straight(1000, None)
+        directions = labyrinth.recon()
+        return directions
 
     
