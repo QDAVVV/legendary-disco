@@ -144,4 +144,5 @@ class MartyFunction:
         directions = labyrinth.recon()
         return directions
 
-    
+    def get_battery(self):
+        return self.my_marty.get_battery_remaining()

@@ -25,22 +25,36 @@ class WorkAreaFunction:
         work_area.organize_blocks_for_execution()
 
     def on_off_clicked(self):
+        if(self.is_connected==False):
+            marty_ip = self.ip_manager.get_ip_address1()
+            print('ip:', marty_ip)  
+            self.marty = MartyFunction(marty_ip)
+            try:
+                self.marty.connect()
+            except:
+                print("Couldn't connect to Marty")
+
+
+            self.is_connected = True
+
+            marty_ip2 = self.ip_manager.get_ip_address2()
+            print('ip2:', marty_ip2) 
+            self.marty2 = MartyFunction(marty_ip2)
+            try:
+                self.marty2.connect()
+            except:
+                print("Couldn't connect to Marty2")
+
+            self.is_connected2 = True
+            print(f"Connected to Marty at {marty_ip}")
+            print(f"Connected to Marty at {marty_ip2}")
         
-        marty_ip = self.ip_manager.get_ip_address1()
-        print('ip:', marty_ip)  
-        self.marty = MartyFunction(marty_ip)
-        self.marty.connect()
-
-        self.is_connected = True
-
-        marty_ip2 = self.ip_manager.get_ip_address2()
-        print('ip2:', marty_ip2) 
-        self.marty2 = MartyFunction(marty_ip2)
-        self.marty2.connect()
-
-        self.is_connected2 = True
-        print(f"Connected to Marty at {marty_ip}")
-        print(f"Connected to Marty at {marty_ip2}")
+        elif(self.is_connected):
+            self.marty  = None
+            self.marty2 = None
+            self.is_connected  = False
+            self.is_connected2 = False
+            print("Disconnected from Marty.")
 
     def up_clicked(self):
         
