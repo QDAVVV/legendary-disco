@@ -113,7 +113,7 @@ class MartyFunction:
         """Recon the labyrinth."""
         if self.my_marty:
             self.my_marty.stand_straight(1000, None)  
-            directions1 = self.labyrinth.recon(self.my_marty)  # Passer self.my_marty comme paramètre
+            directions1 = self.labyrinth.recon()  # Passer self.my_marty comme paramètre
             print("Directions from Marty 1:", directions1)
 
             print("Reconning labyrinth for Marty 2...")
