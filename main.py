@@ -5,8 +5,10 @@ import threading
 from models.ip_manager import IPManager  
 
 def start_game_controller():
-    marty_ip = IPManager.get_instance().get_ip_address()
-    game_controller = GameController(marty_ip)
+    marty_ip = IPManager.get_instance().get_ip_address1()
+    marty_ip2 = IPManager.get_instance().get_ip_address2()
+    
+    game_controller = GameController(marty_ip,marty_ip2)
     game_controller.run()
 
 if __name__ == "__main__":
@@ -15,8 +17,9 @@ if __name__ == "__main__":
     with open("style.qss", "r") as f:
         app.setStyleSheet(f.read())
 
-    marty_ip = "192.168.0.4"  # Changez cette valeur selon votre configuration
-    IPManager.get_instance().set_ip_address(marty_ip)  # Définir l'adresse IP dans IPManager
+    # Définir les adresses IP dans IPManager
+    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 1
+    IPManager.get_instance().add_ip_address("192.168.0.5") # Addresse IP du Marty 2
 
     window = MainWindow()
     window.show()

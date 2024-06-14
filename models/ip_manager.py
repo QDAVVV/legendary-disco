@@ -2,7 +2,7 @@ class IPManager:
     _instance = None
 
     def __init__(self):
-        self.ip_address = None
+        self.ip_addresses = []
 
     @classmethod
     def get_instance(cls):
@@ -10,8 +10,18 @@ class IPManager:
             cls._instance = IPManager()
         return cls._instance
 
-    def set_ip_address(self, ip_address):
-        self.ip_address = ip_address
+    def set_ip_addresses(self, ip_addresses):
+        self.ip_addresses = ip_addresses
 
-    def get_ip_address(self):
-        return self.ip_address
+    def add_ip_address(self, ip_address):
+        self.ip_addresses.append(ip_address)
+
+    def get_ip_addresses(self):
+        return self.ip_addresses
+    
+    def get_ip_address1(self):
+        return self.ip_addresses[0]
+    
+    def get_ip_address2(self):
+        return self.ip_addresses[1]
+

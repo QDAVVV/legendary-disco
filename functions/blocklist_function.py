@@ -1,17 +1,19 @@
-# functions/blocklist_function.py
-
 from functions.marty_function import MartyFunction
 from ui.work_area import WorkArea
 from blocks.for_block_widget import ForBlockWidget
 from blocks.walk_block_widget import WalkBlockWidget
-from blocks.connect_block_widget import ConnectBlockWidget  # Assuming this exists
-from models.interpreter import ForBlock, WalkBlock
+from blocks.connect_block_widget import ConnectBlockWidget  
+from blocks.dance_block_widget import DanceBlockWidget
+from blocks.rotate_block_widget import RotateBlockWidget
+from blocks.side_step_block_widget import SideStepBlockWidget
+from blocks.wait_block_widget import WaitBlockWidget
+from models.interpreter import ForBlock, WalkBlock,ConnectBlock, DanceBlock, RotateBlock, SideStepBlock, WaitBlock
 from models.ip_manager import IPManager
 
 class BlocklistFunction:
     def __init__(self, work_area):
         self.work_area = work_area
-        self.marty_ip = IPManager.get_instance().get_ip_address()
+        self.marty_ip = IPManager.get_instance().get_ip_address1()
 
     def execute_program(self):
         work_area = self.work_area
@@ -83,6 +85,18 @@ marty_function.connect()
                 code += "marty_function.walk(steps=2, direction='auto', turn=0, step_length=35, step_time=1500)\n"
             elif isinstance(block_widget, ConnectBlockWidget):
                 code += self.connect_marty_code()
+            elif isinstance(block_widget, DanceBlockWidget):
+                code += "marty_function.dance()\n"
+            elif isinstance(block_widget, RotateBlockWidget):
+                angle = block_widget.get_angle()
+                code += f"marty_function.turn(turn_amount={angle})\n"
+            elif isinstance(block_widget, SideStepBlockWidget):
+                direction = block_widget.get_direction()
+                code += f"marty_function.side_step(direction='{direction}')\n"
+            elif isinstance(block_widget, WaitBlockWidget):
+                seconds = block_widget.get_duration()
+                code += f"marty_function.wait(seconds={seconds})\n"
+
 
         print(code)
         try:
@@ -103,6 +117,23 @@ marty_function.connect()
             return WalkBlock(2)
         elif isinstance(block_widget, ConnectBlockWidget):
             return self.connect_marty_code()
+        elif isinstance(block_widget, DanceBlockWidget):
+            return DanceBlock()
+        elif isinstance(block_widget, RotateBlockWidget):
+            angle = block_widget.get_angle()
+            return RotateBlock(angle)
+        elif isinstance(block_widget, SideStepBlockWidget):
+            direction = block_widget.get_direction() 
+            return SideStepBlock(direction)
+        elif isinstance(block_widget, WaitBlockWidget):
+            seconds = block_widget.get_duration()  
+            return WaitBlock(seconds)
+        
+
+
+
+
+
 
     def connect_marty_code(self):
         return """

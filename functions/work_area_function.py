@@ -4,7 +4,9 @@ class WorkAreaFunction:
     def __init__(self, work_area):
         self.work_area = work_area
         self.marty = None
+        self.marty2 = None
         self.is_connected = False
+        self.is_connected2 = False
         self.ip_manager = IPManager.get_instance()
 
     def set_marty_ip(self, marty_ip):
@@ -23,11 +25,22 @@ class WorkAreaFunction:
         work_area.organize_blocks_for_execution()
 
     def on_off_clicked(self):
-        marty_ip = self.ip_manager.get_ip_address()
+        
+        marty_ip = self.ip_manager.get_ip_address1()
+        print('ip:', marty_ip)  
         self.marty = MartyFunction(marty_ip)
         self.marty.connect()
+
         self.is_connected = True
+
+        marty_ip2 = self.ip_manager.get_ip_address2()
+        print('ip2:', marty_ip2) 
+        self.marty2 = MartyFunction(marty_ip2)
+        self.marty2.connect()
+
+        self.is_connected2 = True
         print(f"Connected to Marty at {marty_ip}")
+        print(f"Connected to Marty at {marty_ip2}")
 
     def up_clicked(self):
         
@@ -64,5 +77,11 @@ class WorkAreaFunction:
     def turn_right_clicked(self):
         if self.is_connected and self.marty:
             self.marty.turn(direction='right')
+        else:
+            print("Marty is not connected!")
+    
+    def auto_clicked(self):
+        if self.is_connected and self.marty:
+            self.marty.auto_walk()
         else:
             print("Marty is not connected!")
